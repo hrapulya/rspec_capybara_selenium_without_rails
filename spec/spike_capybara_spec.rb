@@ -6,7 +6,8 @@ require 'selenium-webdriver'
 
 Capybara.default_driver = :selenium
 Capybara.app_host = "http://www.youtube.com"
-Selenium::WebDriver::Firefox::Binary.path="/home/john/bin/firefox/firefox"
+#Selenium::WebDriver::Firefox::Binary.path="/usr/bin/firefox"
+#Selenium::WebDriver::Firefox::Binary.path="/home/john/bin/firefox/firefox"
 
 describe "Searching for a video" do
 		it "allows searches for general terms" do
