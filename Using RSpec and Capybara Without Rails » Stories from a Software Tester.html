@@ -1,0 +1,990 @@
+<!doctype html>
+<!--[if lt IE 7]> <html class="no-js ie6 lt-ie9 lt-ie8 lt-ie7" lang="en-US"> <![endif]-->
+<!--[if IE 7]>    <html class="no-js ie7 lt-ie9 lt-ie8" lang="en-US"> <![endif]-->
+<!--[if IE 8]>    <html class="no-js ie8 lt-ie9" lang="en-US"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en-US"> <!--<![endif]-->
+	<head>
+		<meta charset="UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+		<meta name="viewport" content="width=device-width">
+		<title>Using RSpec and Capybara Without Rails &raquo; Stories from a Software Tester</title>
+		<link rel="profile" href="http://gmpg.org/xfn/11" />
+		<link rel="pingback" href="http://testerstories.com/xmlrpc.php" />
+		<style type="text/css"> #wrapper { max-width: 960px !important;} </style>
+		<link rel="alternate" type="application/rss+xml" title="Stories from a Software Tester &raquo; Feed" href="http://testerstories.com/?feed=rss2" />
+<link rel="alternate" type="application/rss+xml" title="Stories from a Software Tester &raquo; Comments Feed" href="http://testerstories.com/?feed=comments-rss2" />
+<link rel="alternate" type="application/rss+xml" title="Stories from a Software Tester &raquo; Using RSpec and Capybara Without Rails Comments Feed" href="http://testerstories.com/?feed=rss2&#038;p=30" />
+<link rel='stylesheet' id='brunelleschi_center-navigation-css'  href='http://testerstories.com/wp-content/themes/brunelleschi/css/center-navigation.css?ver=3.5.1' type='text/css' media='all' />
+<link rel='stylesheet' id='brunelleschi_nav-above-banner-css'  href='http://testerstories.com/wp-content/themes/brunelleschi/css/nav-above-banner.css?ver=3.5.1' type='text/css' media='all' />
+<link rel='stylesheet' id='style.css-css'  href='http://testerstories.com/wp-content/themes/brunelleschi/style.css?ver=3.5.1' type='text/css' media='all' />
+<link rel='stylesheet' id='crayon-css'  href='http://testerstories.com/wp-content/plugins/crayon-syntax-highlighter/css/min/crayon.min.css?ver=2.2.0' type='text/css' media='all' />
+<link rel='stylesheet' id='crayon-theme-classic-css'  href='http://testerstories.com/wp-content/plugins/crayon-syntax-highlighter/themes/classic/classic.css?ver=2.2.0' type='text/css' media='all' />
+<link rel='stylesheet' id='crayon-font-monaco-css'  href='http://testerstories.com/wp-content/plugins/crayon-syntax-highlighter/fonts/monaco.css?ver=2.2.0' type='text/css' media='all' />
+<script type='text/javascript' src='http://testerstories.com/wp-includes/js/jquery/jquery.js?ver=1.8.3'></script>
+<script type='text/javascript'>
+/* <![CDATA[ */
+var MyAjax = {"ajaxurl":"http:\/\/testerstories.com\/wp-admin\/admin-ajax.php"};
+/* ]]> */
+</script>
+<script type='text/javascript' src='http://testerstories.com/wp-content/plugins/ajax-quick-subscribe/ajax.js?ver=3.5.1'></script>
+<script type='text/javascript' src='http://testerstories.com/wp-content/themes/brunelleschi/js/modernizr-2.5.2.min.js?ver=3.5.1'></script>
+<script type='text/javascript' src='http://testerstories.com/wp-content/themes/brunelleschi/js/respond.js?ver=3.5.1'></script>
+<script type='text/javascript' src='http://testerstories.com/wp-content/themes/brunelleschi/js/brunelleschi-scripts.js?ver=3.5.1'></script>
+<script type='text/javascript'>
+/* <![CDATA[ */
+var quicktagsL10n = {"wordLookup":"Enter a word to look up:","dictionaryLookup":"Dictionary lookup","lookup":"lookup","closeAllOpenTags":"Close all open tags","closeTags":"close tags","enterURL":"Enter the URL","enterImageURL":"Enter the URL of the image","enterImageDescription":"Enter a description of the image","fullscreen":"fullscreen","toggleFullscreen":"Toggle fullscreen mode","textdirection":"text direction","toggleTextdirection":"Toggle Editor Text Direction"};
+/* ]]> */
+</script>
+<script type='text/javascript' src='http://testerstories.com/wp-includes/js/quicktags.min.js?ver=3.5.1'></script>
+<script type='text/javascript'>
+/* <![CDATA[ */
+var CrayonSyntaxSettings = {"version":"2.2.0","is_admin":"0","ajaxurl":"http:\/\/testerstories.com\/wp-admin\/admin-ajax.php","prefix":"crayon-","setting":"crayon-setting","selected":"crayon-setting-selected","changed":"crayon-setting-changed","special":"crayon-setting-special","orig_value":"data-orig-value","debug":""};
+var CrayonSyntaxStrings = {"copy":"Press %s to Copy, %s to Paste","minimize":"Click To Expand Code"};
+var CrayonTagEditorSettings = {"home_url":"http:\/\/testerstories.com","css":"crayon-te","css_selected":"crayon-selected","code_css":"#crayon-code","url_css":"#crayon-url","url_info_css":"#crayon-te-url-info","lang_css":"#crayon-lang","title_css":"#crayon-title","mark_css":"#crayon-mark","range_css":"#crayon-range","inline_css":"crayon-inline","inline_hide_css":"crayon-hide-inline","inline_hide_only_css":"crayon-hide-inline-only","hl_css":"#crayon-highlight","switch_html":"#content-html","switch_tmce":"#content-tmce","tinymce_button":"a.mce_crayon_tinymce","submit_css":"#crayon-te-ok","cancel_css":"#crayon-te-cancel","content_css":"#crayon-te-content","dialog_title_css":"#crayon-te-title","submit_wrapper_css":"#crayon-te-submit-wrapper","data_value":"data-value","attr_sep":":","css_sep":"_","fallback_lang":"default","dialog_title_add":"Add Crayon Code","dialog_title_edit":"Edit Crayon Code","submit_add":"Add","submit_edit":"Save","bar":"#crayon-te-bar","bar_content":"#crayon-te-bar-content","extensions":{"scpt":"applescript","applescript":"applescript","swf":"as","fla":"as","cs":"c#","h":"c++","hh":"c++","hpp":"c++","hxx":"c++","h++":"c++","cc":"c++","cpp":"c++","cxx":"c++","c++":"c++","pas":"delphi","java":"java","class":"java","jar":"java","mv":"miva","mvc":"miva","mvt":"miva","m":"objc","mm":"objc","pl":"perl","py":"python","pyw":"python","pyc":"python","pyo":"python","pyd":"python","rb":"ruby","rbx":"ruby","rhtml":"ruby","vbs":"vb"}};
+var CrayonSyntaxSettings = {"version":"2.2.0","is_admin":"0","ajaxurl":"http:\/\/testerstories.com\/wp-admin\/admin-ajax.php","prefix":"crayon-","setting":"crayon-setting","selected":"crayon-setting-selected","changed":"crayon-setting-changed","special":"crayon-setting-special","orig_value":"data-orig-value","debug":""};
+var CrayonSyntaxStrings = {"copy":"Press %s to Copy, %s to Paste","minimize":"Click To Expand Code"};
+/* ]]> */
+</script>
+<script type='text/javascript' src='http://testerstories.com/wp-content/plugins/crayon-syntax-highlighter/js/min/crayon.te.min.js?ver=2.2.0'></script>
+<script type='text/javascript' src='http://testerstories.com/wp-includes/js/comment-reply.min.js?ver=3.5.1'></script>
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="http://testerstories.com/xmlrpc.php?rsd" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="http://testerstories.com/wp-includes/wlwmanifest.xml" /> 
+<link rel='prev' title='Spiking With Open Source Testing Tools' href='http://testerstories.com/?p=21' />
+<link rel='next' title='Testers Relax &#8230; You Don&#8217;t Really Assure Quality' href='http://testerstories.com/?p=38' />
+<meta name="generator" content="WordPress 3.5.1" />
+<link rel='canonical' href='http://testerstories.com/?p=30' />
+<style id="syntaxhighlighteranchor"></style>
+		<style>p.box {
+	font-family: Georgia, \"Times New Roman\", Times, serif;
+	text-align: justify;
+	padding-top: 25px;
+	margin: 0;
+	line-height: 1.2;
+}
+
+p.internal {
+	padding-bottom: 10px;
+	padding-top: 10px;
+	margin: 0;
+	line-height: 1.2;
+}
+
+p.example {
+	padding: 1ex;
+	margin-right: 50px; margin-left: 50px;
+	border: .5ex solid #808080;
+	color: #000000;
+	line-height: 1.2;
+	text-indent: 0em;
+}
+
+div.example {
+	margin-right: 50px; margin-left: 50px;
+	border: .5ex solid #808080;
+	color: #000000;
+	line-height: 1.3;
+	text-indent: 0em;
+}
+
+div.story {
+	padding: 8px;
+	margin 20px 0px;
+	margin-right: 50px; margin-left: 50px;
+	border: solid 2px #000;
+	background-color: transparent;
+	color: #000000;
+}
+
+div.statement {
+	padding: 8px;
+	margin: 20px 0px;
+	margin-right: 50px; margin-left: 50px;
+	border: solid 2px #030;
+	background-color: #657383;
+	color: #ffffff;
+	text-align: center;
+}
+
+#headquote blockquote {
+	text-align: left;
+	margin: 0 auto 20px auto;
+	color: #555;
+	background: #eee url(images/quote_top.gif) no-repeat top left;
+}
+
+#headquote blockquote {
+	width: 370px;
+	font-size: 110%;
+	letter-spacing: -1px;
+	line-height: 1.2em;
+}
+
+#headquote #quote {
+	margin-left: 40px;
+	padding: 20px 20px 10px 20px;
+	background: url(images/quote_bottom.gif) no-repeat right bottom;
+}
+
+#headquote #author {
+	margin: 0;
+	text-align: center;
+	padding: 0 0 10px 0;
+	color: #999;
+	font-size: 95%;
+}
+
+#headquote blockquote strong {
+	color: #000;
+	font-weight: normal;
+}
+
+div.note {
+	padding-right: 0.5em; padding-left: 3em;
+	padding-bottom: 0.5em; padding-top: 0.5em;
+	margin: 20px 0px;
+	margin-right: 50px; margin-left: 50px;
+	background-color: #f2f2e1;
+}
+	
+div.tip {
+	padding-right: 0.5em; padding-left: 3em;
+	padding-bottom: 0.5em; padding-top: 0.5em;
+	margin: 20px 0px;
+	margin-right: 50px; margin-left: 50px;
+	background-color: #f2f2e1
+}
+	
+div.caution {
+	padding-right: 0.5em; padding-left: 3em;
+	padding-bottom: 0.5em; padding-top: 0.5em;
+	margin: 20px 0px;
+	margin-right: 50px; margin-left: 50px;
+	background-color: #f2f2e1
+}
+	
+div.important {
+	padding-right: 0.5em; padding-left: 3em;
+	padding-bottom: 0.5em; padding-top: 0.5em;
+	margin: 20px 0px;
+	margin-right: 50px; margin-left: 50px;
+	background-color: #f2f2e1
+}
+	
+.notetitle {
+	display: block;
+	margin: -0.5em -0.5em -1em -3em;
+	position: relative;
+	height: 34px;
+	background-color: #ededdd;
+}
+	
+.notetitle span {
+	padding-right: 0px; padding-left: 45px;
+	padding-bottom: 5px; padding-top: 12px;
+	background-position: left top;
+	background-repeat: no-repeat;
+	display: block; position: absolute;
+	font-weight: bold; font-size: 1.2em;
+	top: -3px; left: -3px;
+	font-family: Verdana,\'Trebuchet MS\',Arial,Helvetica,sans-serif;
+	height: 2em;
+}
+
+.simplequote {
+	background: #fff url(images/box_quote.png) no-repeat;
+	padding: 5px;
+	margin-top: 20px; margin-bottom: 20px;
+	margin-left: 50px; margin-right: 50px;
+	border: 3px solid #cecece;
+	text-indent: 25px;
+}
+
+.note .notetitle span { background-image: url(images/box_note.png) }
+.note p { font-size: 105%; margin-bottom: 0px; line-height: 167%; text-indent: 0em; }
+
+.tip .notetitle span { background-image: url(images/box_tip.png) }
+.tip p { font-size: 105%; margin-bottom: 0px; line-height: 167%; text-indent: 0em; }
+
+.caution .notetitle span { background-image: url(images/box_warning.png) }
+.caution p { font-size: 105%; margin-bottom: 0px; line-height: 167%; text-indent: 0em; }
+
+.important .notetitle span { background-image: url(images/box_important.png) }
+.important p { font-size: 105%; margin-bottom: 0px; line-height: 167%; text-indent: 0em; }</style>
+	</head>
+	<body class="single single-post postid-30 single-format-standard">
+	<div id="wrapper" class="hfeed container">
+		<header id="header" class="row clearfix">
+							<hgroup id="branding" class="twelvecol last">
+					<h1 class="site-title"><a href="http://testerstories.com/" title="Stories from a Software Tester" rel="home">Stories from a Software Tester</a></h1>
+					<h2 class="site-description">Twice upon a time, in another space, no distance in any direction from here &#8230;</h2>
+				</hgroup>
+										<div id="access" role="navigation" class="twelvecol last clearfix">
+					<div class="skip-link screen-reader-text"><a href="#content" title="Skip to content">Skip to content</a></div>
+					<div class="menu"><ul><li ><a href="http://testerstories.com/" title="Home">Home</a></li><li class="page_item page-item-7"><a href="http://testerstories.com/?page_id=7">About Tester Stories</a></li><li class="page_item page-item-260"><a href="http://testerstories.com/?page_id=260">Open Source Automation Setup</a></li><li class="page_item page-item-10"><a href="http://testerstories.com/?page_id=10">Who Am I</a></li></ul></div>
+				</div><!-- #access -->
+																	</header><!-- #header -->
+		<div id="container" class="row clearfix">		
+		<div id="main" role="main" class="ninecol ">
+
+			
+				<nav id="nav-above" class="navigation">
+					<div class="nav-previous"><a href="http://testerstories.com/?p=21" rel="prev"><span class="meta-nav">&larr;</span> Spiking With Open Source Testing Tools</a></div>
+					<div class="nav-next"><a href="http://testerstories.com/?p=38" rel="next">Testers Relax &#8230; You Don&#8217;t Really Assure Quality <span class="meta-nav">&rarr;</span></a></div>
+				</nav><!-- #nav-above -->
+
+				<article id="post-30" class="post-30 post type-post status-publish format-standard hentry category-capybara category-rspec">
+					<header>
+						<h1 class="entry-title">Using RSpec and Capybara Without Rails</h1>
+												<div class="entry-meta">
+							<span class="meta-sep">by</span> <span class="author vcard"><a class="url fn n" href="http://testerstories.com/?author=1" title="View all posts by Jeff Nyman">Jeff Nyman</a></span> <span class="meta-prep meta-prep-author">Posted on</span> <a href="http://testerstories.com/?p=30" title="6:41 pm" rel="bookmark"><span class="entry-date">15 August 2011</span></a>						</div><!-- .entry-meta -->
+											</header>
+					<div class="entry-content">
+						<p>Building off of <a href="http://testerstories.com/?p=21">my post regarding spiking automated testing solutions</a>, one thing I didn&#8217;t really do was show you any sort of effective coding practice there at all. In that post I was showing how to get a series of technologies working together for that old &#8220;sense of accomplishment&#8221; thing. What I want to do here is focus on using two of those technologies together &#8212; specifically, Capybara and RSpec &#8212; while also showing you how you can start to separate out bits of logic as you start thinking about how to construct automated test frameworks for testing browser-based applications.</p>
+<p><span id="more-30"></span></p>
+<p>After I&#8217;ve done spikes to make sure I understand how something works, I then try to get a little better with one specific aspect of what I spiked so that I can better learn how to utilize the tools. This post will give you some insight into how I go about that process when I have to incorporate my results into my testing work.</p>
+<p>When I first heard about RSpec what I heard was that it&#8217;s a behavior-driven development (BDD) test framework written in Ruby. That told me very little. I then heard that RSpec is a testing framework that facilitates using a BDD process for Ruby. Okay, but I&#8217;m still not sure what I&#8217;d do with it. Then I heard that, by itself, RSpec can only test Ruby applications or scripts. This was often followed by lots of stuff that showed how RSpec was incorporated into Rails development. Hmm. That sounded good if I had a Rails application or all of my application was in Ruby. But I just needed to test a user interface in a browser.</p>
+<p>Then I came across Capybara. (Well, actually I came across the test framework Watir which then led me to Selenium which then led me to Capybara.) At first I heard that Capybara was a cool thing that was going to replace Webrat (whatever <em>that</em> was) and was going to simplify running integration tests on Rack applications (whatever <em>those</em> were). Maybe that was cool. I had no idea at the time. What kept me looking at Capybara was that I heard it was &#8220;driver agnostic&#8221; and supported Selenium. Eventually what I realized is that Capybara is a tool to automate navigating through web sites and web applications through a browser. (Maybe it was just my searching, but it took me a surprisingly long bit of time to actually just find out that simple statement, divorced from Webrats, Rack applications, and so forth.)</p>
+<div class="note">
+<div class="notetitle"><span>Note</span></div>
+<p class="box">I should note that there is not, at the time I write this, a Watir adapter/driver for Capybara. From what I&#8217;m reading it doesn’t seem like there will be anytime soon.</p>
+</div>
+<p>I ended up in a situation where developers wanted to utilize RSpec for their integration-level tests and were curious if I&#8217;d be willing to do the same for system-level tests that required the UI. I had already decided I wanted to try out Capybara so, sure, why not. What I ended up doing is sort of wrapping Capybara within RSpec execution. What does this get me? In terms of actual UI-based testing, not much. In terms of documenting my tests, however, this allows me to wrap the executable portions of my tests around specific RSpec constructs that have the potential of documenting my tests. So I&#8217;ll show you what I did using a very simplified example.</p>
+<p>For this example, you&#8217;ll need Ruby and Rubygems installed on your system. You&#8217;ll also need the appropriate gems installed. If you execute the following commands, you should be good:</p>
+<div style="margin-left:20px;">
+<pre>
+$ gem install rspec
+$ gem install selenium-webdriver
+$ gem install capybara
+</pre>
+</div>
+<p>First, create a project directory called <strong>spec</strong>. In that directory, create the following files: <strong>spike_capybara_spec.rb</strong>, <strong>spec_helper.rb</strong>, and <strong>test_helper.rb</strong>.</p>
+<p>In spike_capybara_spec.rb, start with the following code:</p>
+<p></p><!-- Crayon Syntax Highlighter v2.2.0 -->
+
+		<div id="crayon-5188347846453" class="crayon-syntax crayon-theme-classic crayon-font-monaco crayon-os-pc print-yes" data-settings=" minimize scroll-mouseover" style=" margin-top: 12px; margin-bottom: 12px; float: none; clear: both; font-size: 12px !important; line-height: 15px !important;">
+		
+			<div class="crayon-toolbar" data-settings=" mouseover overlay hide delay" style="font-size: 12px !important;height: 18px !important; line-height: 18px !important;"><span class="crayon-title"></span>
+			<div class="crayon-tools" style="font-size: 12px !important;height: 18px !important; line-height: 18px !important;"><div class="crayon-button crayon-nums-button" title="Toggle Line Numbers"><div class="crayon-button-icon"></div></div><div class="crayon-button crayon-plain-button" title="Toggle Plain Code"><div class="crayon-button-icon"></div></div><div class="crayon-button crayon-wrap-button" title="Toggle Line Wrap"><div class="crayon-button-icon"></div></div><div class="crayon-button crayon-expand-button" title="Expand Code"><div class="crayon-button-icon"></div></div><div class="crayon-button crayon-copy-button" title="Expand Code"><div class="crayon-button-icon"></div></div><div class="crayon-button crayon-popup-button" title="Open Code In New Window"><div class="crayon-button-icon"></div></div><span class="crayon-language">Ruby</span></div></div>
+			<div class="crayon-info" style="min-height: 16.8px !important; line-height: 16.8px !important;"></div>
+			<div class="crayon-plain-wrap"><textarea wrap="off" class="crayon-plain print-no" data-settings="dblclick" readonly style="-moz-tab-size:2; -o-tab-size:2; -webkit-tab-size:2; tab-size:2; font-size: 12px !important; line-height: 15px !important;">
+require 'rspec'
+require 'capybara'
+require 'capybara/dsl'
+require 'spec_helper.rb'
+
+Capybara.default_driver = :selenium
+Capybara.app_host = "http://www.youtube.com"</textarea></div>
+			<div class="crayon-main" style="">
+				<table class="crayon-table">
+					<tr class="crayon-row">
+				<td class="crayon-nums " data-settings="show">
+					<div class="crayon-nums-content" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-num" data-line="crayon-5188347846453-1">1</div><div class="crayon-num crayon-striped-num" data-line="crayon-5188347846453-2">2</div><div class="crayon-num" data-line="crayon-5188347846453-3">3</div><div class="crayon-num crayon-striped-num" data-line="crayon-5188347846453-4">4</div><div class="crayon-num" data-line="crayon-5188347846453-5">5</div><div class="crayon-num crayon-striped-num" data-line="crayon-5188347846453-6">6</div><div class="crayon-num" data-line="crayon-5188347846453-7">7</div></div>
+				</td>
+						<td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-line" id="crayon-5188347846453-1"><span class="i">require</span><span class="h"> </span><span class="s">'rspec'</span></div><div class="crayon-line crayon-striped-line" id="crayon-5188347846453-2"><span class="i">require</span><span class="h"> </span><span class="s">'capybara'</span></div><div class="crayon-line" id="crayon-5188347846453-3"><span class="i">require</span><span class="h"> </span><span class="s">'capybara/dsl'</span></div><div class="crayon-line crayon-striped-line" id="crayon-5188347846453-4"><span class="i">require</span><span class="h"> </span><span class="s">'spec_helper.rb'</span></div><div class="crayon-line" id="crayon-5188347846453-5">&nbsp;</div><div class="crayon-line crayon-striped-line" id="crayon-5188347846453-6"><span class="v">Capybara</span><span class="sy">.</span><span class="r">def</span><span class="v">ault_driver</span><span class="h"> </span><span class="o">=</span><span class="h"> </span><span class="o">:</span><span class="i">selenium</span></div><div class="crayon-line" id="crayon-5188347846453-7"><span class="v">Capybara</span><span class="sy">.</span><span class="v">app_host</span><span class="h"> </span><span class="o">=</span><span class="h"> </span><span class="s">"http://www.youtube.com"</span></div></div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+<!-- [Format Time: 0.0017 seconds] -->
+<p></p>
+<p>Here I&#8217;m just requiring the necessary gems and specifying a few Capybara attributes. Capybara uses a driver to control browsers. If you don&#8217;t specify a specific driver, then Capybara will use something called &#8220;rack_test&#8221; which is (1) specific to Rack applications and (2) doesn&#8217;t handle JavaScript. In my case, I&#8217;ve changed the driver to Selenium. I do this because Capybara supports Selenium 2.0 (using WebDriver) without any other configuration.</p>
+<div class="note">
+<div class="notetitle"><span>Note</span></div>
+<p class="box">Note for those who know Selenium: Capybara does not support Selenium 1.0, otherwise known as Selenium RC.</p>
+</div>
+<p>I set the app_host because default Capybara operation has the tool assuming it&#8217;s testing an in-process Rack application. Specifying an app_host like this means I&#8217;m telling Capybara that it&#8217;s going to be talking to a web server.</p>
+<p>One of the things I want to use is Capybara&#8217;s DSL (domain-specific language) that provides easy to reference phrases for interacting with a web browser and the elements on a web page. Beyond requiring the gem, as I did above, I need to tell RSpec to include this Capybara DSL so my tests &#8212; which are going to be wrapped in RSpec constructs &#8212; will be able to use the reference phrases (methods, basically) that the Capybara DSL provides.</p>
+<p>Now, this gets a little into RSpec setup here. Sometimes you&#8217;re going to have some generic code you want to run before or after every single one of your tests in RSpec. This generic code can be defined in an RSpec configuration. This configuration typically lives in a spec_helper.rb file that is required from other files.</p>
+<p>In the spec_helper.rb file, put the following code in place:</p>
+<p></p><!-- Crayon Syntax Highlighter v2.2.0 -->
+
+		<div id="crayon-518834784683a" class="crayon-syntax crayon-theme-classic crayon-font-monaco crayon-os-pc print-yes" data-settings=" minimize scroll-mouseover" style=" margin-top: 12px; margin-bottom: 12px; float: none; clear: both; font-size: 12px !important; line-height: 15px !important;">
+		
+			<div class="crayon-toolbar" data-settings=" mouseover overlay hide delay" style="font-size: 12px !important;height: 18px !important; line-height: 18px !important;"><span class="crayon-title"></span>
+			<div class="crayon-tools" style="font-size: 12px !important;height: 18px !important; line-height: 18px !important;"><div class="crayon-button crayon-nums-button" title="Toggle Line Numbers"><div class="crayon-button-icon"></div></div><div class="crayon-button crayon-plain-button" title="Toggle Plain Code"><div class="crayon-button-icon"></div></div><div class="crayon-button crayon-wrap-button" title="Toggle Line Wrap"><div class="crayon-button-icon"></div></div><div class="crayon-button crayon-expand-button" title="Expand Code"><div class="crayon-button-icon"></div></div><div class="crayon-button crayon-copy-button" title="Expand Code"><div class="crayon-button-icon"></div></div><div class="crayon-button crayon-popup-button" title="Open Code In New Window"><div class="crayon-button-icon"></div></div><span class="crayon-language">Ruby</span></div></div>
+			<div class="crayon-info" style="min-height: 16.8px !important; line-height: 16.8px !important;"></div>
+			<div class="crayon-plain-wrap"><textarea wrap="off" class="crayon-plain print-no" data-settings="dblclick" readonly style="-moz-tab-size:2; -o-tab-size:2; -webkit-tab-size:2; tab-size:2; font-size: 12px !important; line-height: 15px !important;">
+RSpec.configure do |config|
+  config.include Capybara::DSL
+end</textarea></div>
+			<div class="crayon-main" style="">
+				<table class="crayon-table">
+					<tr class="crayon-row">
+				<td class="crayon-nums " data-settings="show">
+					<div class="crayon-nums-content" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-num" data-line="crayon-518834784683a-1">1</div><div class="crayon-num crayon-striped-num" data-line="crayon-518834784683a-2">2</div><div class="crayon-num" data-line="crayon-518834784683a-3">3</div></div>
+				</td>
+						<td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-line" id="crayon-518834784683a-1"><span class="v">RSpec</span><span class="sy">.</span><span class="i">configure</span><span class="h"> </span><span class="st">do</span><span class="h"> </span><span class="o">|</span><span class="i">config</span><span class="o">|</span></div><div class="crayon-line crayon-striped-line" id="crayon-518834784683a-2"><span class="h">&nbsp;&nbsp;</span><span class="v">config</span><span class="sy">.</span><span class="i">include</span><span class="h"> </span><span class="i">Capybara</span><span class="o">::</span><span class="i">DSL</span></div><div class="crayon-line" id="crayon-518834784683a-3"><span class="st">end</span></div></div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+<!-- [Format Time: 0.0010 seconds] -->
+<p></p>
+<p>Now back in the spike_capybara_spec.rb file, put the following code in:</p>
+<p></p><!-- Crayon Syntax Highlighter v2.2.0 -->
+
+		<div id="crayon-5188347846c22" class="crayon-syntax crayon-theme-classic crayon-font-monaco crayon-os-pc print-yes" data-settings=" minimize scroll-mouseover" style=" margin-top: 12px; margin-bottom: 12px; float: none; clear: both; font-size: 12px !important; line-height: 15px !important;">
+		
+			<div class="crayon-toolbar" data-settings=" mouseover overlay hide delay" style="font-size: 12px !important;height: 18px !important; line-height: 18px !important;"><span class="crayon-title"></span>
+			<div class="crayon-tools" style="font-size: 12px !important;height: 18px !important; line-height: 18px !important;"><div class="crayon-button crayon-nums-button" title="Toggle Line Numbers"><div class="crayon-button-icon"></div></div><div class="crayon-button crayon-plain-button" title="Toggle Plain Code"><div class="crayon-button-icon"></div></div><div class="crayon-button crayon-wrap-button" title="Toggle Line Wrap"><div class="crayon-button-icon"></div></div><div class="crayon-button crayon-expand-button" title="Expand Code"><div class="crayon-button-icon"></div></div><div class="crayon-button crayon-copy-button" title="Expand Code"><div class="crayon-button-icon"></div></div><div class="crayon-button crayon-popup-button" title="Open Code In New Window"><div class="crayon-button-icon"></div></div><span class="crayon-language">Ruby</span></div></div>
+			<div class="crayon-info" style="min-height: 16.8px !important; line-height: 16.8px !important;"></div>
+			<div class="crayon-plain-wrap"><textarea wrap="off" class="crayon-plain print-no" data-settings="dblclick" readonly style="-moz-tab-size:2; -o-tab-size:2; -webkit-tab-size:2; tab-size:2; font-size: 12px !important; line-height: 15px !important;">
+describe "Searching for a video" do
+  it "allows searches for general terms" do
+  end
+end</textarea></div>
+			<div class="crayon-main" style="">
+				<table class="crayon-table">
+					<tr class="crayon-row">
+				<td class="crayon-nums " data-settings="show">
+					<div class="crayon-nums-content" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-num" data-line="crayon-5188347846c22-1">1</div><div class="crayon-num crayon-striped-num" data-line="crayon-5188347846c22-2">2</div><div class="crayon-num" data-line="crayon-5188347846c22-3">3</div><div class="crayon-num crayon-striped-num" data-line="crayon-5188347846c22-4">4</div></div>
+				</td>
+						<td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-line" id="crayon-5188347846c22-1"><span class="i">describe</span><span class="h"> </span><span class="s">"Searching for a video"</span><span class="h"> </span><span class="st">do</span></div><div class="crayon-line crayon-striped-line" id="crayon-5188347846c22-2"><span class="h">&nbsp;&nbsp;</span><span class="i">it</span><span class="h"> </span><span class="s">"allows searches for general terms"</span><span class="h"> </span><span class="st">do</span></div><div class="crayon-line" id="crayon-5188347846c22-3"><span class="h">&nbsp;&nbsp;</span><span class="st">end</span></div><div class="crayon-line crayon-striped-line" id="crayon-5188347846c22-4"><span class="st">end</span></div></div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+<!-- [Format Time: 0.0008 seconds] -->
+<p></p>
+<p>Now try running the following command from outside of your spec directory:</p>
+<div style="margin-left:20px;">
+<pre>
+$ rspec spec --format documentation
+</pre>
+</div>
+<p>You&#8217;ll see that RSpec tosses back just the information in the file that pertains to the nature of the test. The RSpec descriptions of what you are testing go in a &#8216;describe&#8217; method. You put the actual behavior you will be testing in an &#8216;it&#8217; method. The nice thing about this is that the overall logic of your test reads like a series of English statements:</p>
+<pre style="background-color:#000000;color:#ffffff;">
+Searching for a video
+  allows searches for general terms
+</pre>
+<p>While the string for the &#8216;describe&#8217; method describes an overall feature, the string for the &#8216;it&#8217; method should describe the scenario you&#8217;re working to test. What you now have to do is put a code block between the &#8216;do&#8217; and &#8216;end&#8217; that includes the code for the actual test. This is where you tell your test what to do with the browser and the pages that appear in it.</p>
+<p>Now modify the logic of the test logic so that it looks like this:</p>
+<p></p><!-- Crayon Syntax Highlighter v2.2.0 -->
+
+		<div id="crayon-5188347847009" class="crayon-syntax crayon-theme-classic crayon-font-monaco crayon-os-pc print-yes" data-settings=" minimize scroll-mouseover" style=" margin-top: 12px; margin-bottom: 12px; float: none; clear: both; font-size: 12px !important; line-height: 15px !important;">
+		
+			<div class="crayon-toolbar" data-settings=" mouseover overlay hide delay" style="font-size: 12px !important;height: 18px !important; line-height: 18px !important;"><span class="crayon-title"></span>
+			<div class="crayon-tools" style="font-size: 12px !important;height: 18px !important; line-height: 18px !important;"><div class="crayon-button crayon-nums-button" title="Toggle Line Numbers"><div class="crayon-button-icon"></div></div><div class="crayon-button crayon-plain-button" title="Toggle Plain Code"><div class="crayon-button-icon"></div></div><div class="crayon-button crayon-wrap-button" title="Toggle Line Wrap"><div class="crayon-button-icon"></div></div><div class="crayon-button crayon-expand-button" title="Expand Code"><div class="crayon-button-icon"></div></div><div class="crayon-button crayon-copy-button" title="Expand Code"><div class="crayon-button-icon"></div></div><div class="crayon-button crayon-popup-button" title="Open Code In New Window"><div class="crayon-button-icon"></div></div><span class="crayon-language">Ruby</span></div></div>
+			<div class="crayon-info" style="min-height: 16.8px !important; line-height: 16.8px !important;"></div>
+			<div class="crayon-plain-wrap"><textarea wrap="off" class="crayon-plain print-no" data-settings="dblclick" readonly style="-moz-tab-size:2; -o-tab-size:2; -webkit-tab-size:2; tab-size:2; font-size: 12px !important; line-height: 15px !important;">
+describe "Searching for a video" do
+  it "allows searches for general terms" do
+    visit ""
+    fill_in('search_query', :with =&gt; "text adventures")
+    click_button('search-btn')
+    page.should have_content("GET LAMP: The Text Adventure Documentary")
+  end
+end</textarea></div>
+			<div class="crayon-main" style="">
+				<table class="crayon-table">
+					<tr class="crayon-row">
+				<td class="crayon-nums " data-settings="show">
+					<div class="crayon-nums-content" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-num" data-line="crayon-5188347847009-1">1</div><div class="crayon-num crayon-striped-num" data-line="crayon-5188347847009-2">2</div><div class="crayon-num crayon-marked-num crayon-top" data-line="crayon-5188347847009-3">3</div><div class="crayon-num crayon-marked-num crayon-striped-num" data-line="crayon-5188347847009-4">4</div><div class="crayon-num crayon-marked-num" data-line="crayon-5188347847009-5">5</div><div class="crayon-num crayon-marked-num crayon-bottom crayon-striped-num" data-line="crayon-5188347847009-6">6</div><div class="crayon-num" data-line="crayon-5188347847009-7">7</div><div class="crayon-num crayon-striped-num" data-line="crayon-5188347847009-8">8</div></div>
+				</td>
+						<td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-line" id="crayon-5188347847009-1"><span class="i">describe</span><span class="h"> </span><span class="s">"Searching for a video"</span><span class="h"> </span><span class="st">do</span></div><div class="crayon-line crayon-striped-line" id="crayon-5188347847009-2"><span class="h">&nbsp;&nbsp;</span><span class="i">it</span><span class="h"> </span><span class="s">"allows searches for general terms"</span><span class="h"> </span><span class="st">do</span></div><div class="crayon-line crayon-marked-line crayon-top" id="crayon-5188347847009-3"><span class="h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="i">visit</span><span class="h"> </span><span class="s">""</span></div><div class="crayon-line crayon-marked-line crayon-striped-line" id="crayon-5188347847009-4"><span class="h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="e">fill_in</span><span class="sy">(</span><span class="s">'search_query'</span><span class="sy">,</span><span class="h"> </span><span class="o">:</span><span class="v">with</span><span class="h"> </span><span class="o">=</span><span class="o">&gt;</span><span class="h"> </span><span class="s">"text adventures"</span><span class="sy">)</span></div><div class="crayon-line crayon-marked-line" id="crayon-5188347847009-5"><span class="h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="e">click_button</span><span class="sy">(</span><span class="s">'search-btn'</span><span class="sy">)</span></div><div class="crayon-line crayon-marked-line crayon-bottom crayon-striped-line" id="crayon-5188347847009-6"><span class="h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="v">page</span><span class="sy">.</span><span class="i">should</span><span class="h"> </span><span class="e">have_content</span><span class="sy">(</span><span class="s">"GET LAMP: The Text Adventure Documentary"</span><span class="sy">)</span></div><div class="crayon-line" id="crayon-5188347847009-7"><span class="h">&nbsp;&nbsp;</span><span class="st">end</span></div><div class="crayon-line crayon-striped-line" id="crayon-5188347847009-8"><span class="st">end</span></div></div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+<!-- [Format Time: 0.0021 seconds] -->
+<p></p>
+<p>Run this test with the following command (again, outside of your spec directory):</p>
+<div style="margin-left:20px;">
+<pre>
+$ rspec spec
+</pre>
+</div>
+<p>Incidentally, if you want to generate a friendly report of your test execution, execute this command instead:</p>
+<div style="margin-left:20px;">
+<pre>
+$ rspec spec --format html --out results.html
+</pre>
+</div>
+<p>The behavioral part of the test contains lots of implementation details (such as &#8220;fill_in&#8221;, &#8220;click_button&#8221;). That may or may not be bad depending upon your viewpoint. Let&#8217;s assume you think that&#8217;s bad. So, in the test_helper.rb file, put the following code:</p>
+<p></p><!-- Crayon Syntax Highlighter v2.2.0 -->
+
+		<div id="crayon-51883478473f1" class="crayon-syntax crayon-theme-classic crayon-font-monaco crayon-os-pc print-yes" data-settings=" minimize scroll-mouseover" style=" margin-top: 12px; margin-bottom: 12px; float: none; clear: both; font-size: 12px !important; line-height: 15px !important;">
+		
+			<div class="crayon-toolbar" data-settings=" mouseover overlay hide delay" style="font-size: 12px !important;height: 18px !important; line-height: 18px !important;"><span class="crayon-title"></span>
+			<div class="crayon-tools" style="font-size: 12px !important;height: 18px !important; line-height: 18px !important;"><div class="crayon-button crayon-nums-button" title="Toggle Line Numbers"><div class="crayon-button-icon"></div></div><div class="crayon-button crayon-plain-button" title="Toggle Plain Code"><div class="crayon-button-icon"></div></div><div class="crayon-button crayon-wrap-button" title="Toggle Line Wrap"><div class="crayon-button-icon"></div></div><div class="crayon-button crayon-expand-button" title="Expand Code"><div class="crayon-button-icon"></div></div><div class="crayon-button crayon-copy-button" title="Expand Code"><div class="crayon-button-icon"></div></div><div class="crayon-button crayon-popup-button" title="Open Code In New Window"><div class="crayon-button-icon"></div></div><span class="crayon-language">Ruby</span></div></div>
+			<div class="crayon-info" style="min-height: 16.8px !important; line-height: 16.8px !important;"></div>
+			<div class="crayon-plain-wrap"><textarea wrap="off" class="crayon-plain print-no" data-settings="dblclick" readonly style="-moz-tab-size:2; -o-tab-size:2; -webkit-tab-size:2; tab-size:2; font-size: 12px !important; line-height: 15px !important;">
+module TestHelper
+  def visit_youtube
+    visit "http://www.youtube.com"
+  end
+  
+  def search_for_term(text)
+    fill_in('search_query', :with =&gt; text)
+    click_button('search-btn')
+  end
+  
+  def verify_I_see(text)
+    page.should have_content(text)
+  end
+end</textarea></div>
+			<div class="crayon-main" style="">
+				<table class="crayon-table">
+					<tr class="crayon-row">
+				<td class="crayon-nums " data-settings="show">
+					<div class="crayon-nums-content" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-num" data-line="crayon-51883478473f1-1">1</div><div class="crayon-num crayon-striped-num" data-line="crayon-51883478473f1-2">2</div><div class="crayon-num" data-line="crayon-51883478473f1-3">3</div><div class="crayon-num crayon-striped-num" data-line="crayon-51883478473f1-4">4</div><div class="crayon-num" data-line="crayon-51883478473f1-5">5</div><div class="crayon-num crayon-striped-num" data-line="crayon-51883478473f1-6">6</div><div class="crayon-num" data-line="crayon-51883478473f1-7">7</div><div class="crayon-num crayon-striped-num" data-line="crayon-51883478473f1-8">8</div><div class="crayon-num" data-line="crayon-51883478473f1-9">9</div><div class="crayon-num crayon-striped-num" data-line="crayon-51883478473f1-10">10</div><div class="crayon-num" data-line="crayon-51883478473f1-11">11</div><div class="crayon-num crayon-striped-num" data-line="crayon-51883478473f1-12">12</div><div class="crayon-num" data-line="crayon-51883478473f1-13">13</div><div class="crayon-num crayon-striped-num" data-line="crayon-51883478473f1-14">14</div></div>
+				</td>
+						<td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-line" id="crayon-51883478473f1-1"><span class="r">module</span><span class="h"> </span><span class="i">TestHelper</span></div><div class="crayon-line crayon-striped-line" id="crayon-51883478473f1-2"><span class="h">&nbsp;&nbsp;</span><span class="r">def</span><span class="h"> </span><span class="i">visit_youtube</span></div><div class="crayon-line" id="crayon-51883478473f1-3"><span class="h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="i">visit</span><span class="h"> </span><span class="s">"http://www.youtube.com"</span></div><div class="crayon-line crayon-striped-line" id="crayon-51883478473f1-4"><span class="h">&nbsp;&nbsp;</span><span class="st">end</span></div><div class="crayon-line" id="crayon-51883478473f1-5"><span class="h">&nbsp;&nbsp;</span></div><div class="crayon-line crayon-striped-line" id="crayon-51883478473f1-6"><span class="h">&nbsp;&nbsp;</span><span class="r">def</span><span class="h"> </span><span class="e">search_for_term</span><span class="sy">(</span><span class="i">text</span><span class="sy">)</span></div><div class="crayon-line" id="crayon-51883478473f1-7"><span class="h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="e">fill_in</span><span class="sy">(</span><span class="s">'search_query'</span><span class="sy">,</span><span class="h"> </span><span class="o">:</span><span class="v">with</span><span class="h"> </span><span class="o">=</span><span class="o">&gt;</span><span class="h"> </span><span class="i">text</span><span class="sy">)</span></div><div class="crayon-line crayon-striped-line" id="crayon-51883478473f1-8"><span class="h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="e">click_button</span><span class="sy">(</span><span class="s">'search-btn'</span><span class="sy">)</span></div><div class="crayon-line" id="crayon-51883478473f1-9"><span class="h">&nbsp;&nbsp;</span><span class="st">end</span></div><div class="crayon-line crayon-striped-line" id="crayon-51883478473f1-10"><span class="h">&nbsp;&nbsp;</span></div><div class="crayon-line" id="crayon-51883478473f1-11"><span class="h">&nbsp;&nbsp;</span><span class="r">def</span><span class="h"> </span><span class="e">verify_I_see</span><span class="sy">(</span><span class="i">text</span><span class="sy">)</span></div><div class="crayon-line crayon-striped-line" id="crayon-51883478473f1-12"><span class="h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="v">page</span><span class="sy">.</span><span class="i">should</span><span class="h"> </span><span class="e">have_content</span><span class="sy">(</span><span class="i">text</span><span class="sy">)</span></div><div class="crayon-line" id="crayon-51883478473f1-13"><span class="h">&nbsp;&nbsp;</span><span class="st">end</span></div><div class="crayon-line crayon-striped-line" id="crayon-51883478473f1-14"><span class="st">end</span></div></div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+<!-- [Format Time: 0.0028 seconds] -->
+<p></p>
+<p>Here I&#8217;m just creating some methods with friendly names that are meant to be as specific as possible in terms of what that method does. In order to utilize these test helper methods, I need to make sure I include the TestHelper module in my RSpec configuration. This requires adding just two lines to the spec_helper.rb file:</p>
+<p></p><!-- Crayon Syntax Highlighter v2.2.0 -->
+
+		<div id="crayon-51883478477d9" class="crayon-syntax crayon-theme-classic crayon-font-monaco crayon-os-pc print-yes" data-settings=" minimize scroll-mouseover" style=" margin-top: 12px; margin-bottom: 12px; float: none; clear: both; font-size: 12px !important; line-height: 15px !important;">
+		
+			<div class="crayon-toolbar" data-settings=" mouseover overlay hide delay" style="font-size: 12px !important;height: 18px !important; line-height: 18px !important;"><span class="crayon-title"></span>
+			<div class="crayon-tools" style="font-size: 12px !important;height: 18px !important; line-height: 18px !important;"><div class="crayon-button crayon-nums-button" title="Toggle Line Numbers"><div class="crayon-button-icon"></div></div><div class="crayon-button crayon-plain-button" title="Toggle Plain Code"><div class="crayon-button-icon"></div></div><div class="crayon-button crayon-wrap-button" title="Toggle Line Wrap"><div class="crayon-button-icon"></div></div><div class="crayon-button crayon-expand-button" title="Expand Code"><div class="crayon-button-icon"></div></div><div class="crayon-button crayon-copy-button" title="Expand Code"><div class="crayon-button-icon"></div></div><div class="crayon-button crayon-popup-button" title="Open Code In New Window"><div class="crayon-button-icon"></div></div><span class="crayon-language">Ruby</span></div></div>
+			<div class="crayon-info" style="min-height: 16.8px !important; line-height: 16.8px !important;"></div>
+			<div class="crayon-plain-wrap"><textarea wrap="off" class="crayon-plain print-no" data-settings="dblclick" readonly style="-moz-tab-size:2; -o-tab-size:2; -webkit-tab-size:2; tab-size:2; font-size: 12px !important; line-height: 15px !important;">
+require 'test_helper'
+
+RSpec.configure do |config|
+  config.include Capybara::DSL
+  config.include TestHelper
+end</textarea></div>
+			<div class="crayon-main" style="">
+				<table class="crayon-table">
+					<tr class="crayon-row">
+				<td class="crayon-nums " data-settings="show">
+					<div class="crayon-nums-content" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-num crayon-marked-num crayon-top crayon-bottom" data-line="crayon-51883478477d9-1">1</div><div class="crayon-num crayon-striped-num" data-line="crayon-51883478477d9-2">2</div><div class="crayon-num" data-line="crayon-51883478477d9-3">3</div><div class="crayon-num crayon-striped-num" data-line="crayon-51883478477d9-4">4</div><div class="crayon-num crayon-marked-num crayon-top crayon-bottom" data-line="crayon-51883478477d9-5">5</div><div class="crayon-num crayon-striped-num" data-line="crayon-51883478477d9-6">6</div></div>
+				</td>
+						<td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-line crayon-marked-line crayon-top crayon-bottom" id="crayon-51883478477d9-1"><span class="i">require</span><span class="h"> </span><span class="s">'test_helper'</span></div><div class="crayon-line crayon-striped-line" id="crayon-51883478477d9-2">&nbsp;</div><div class="crayon-line" id="crayon-51883478477d9-3"><span class="v">RSpec</span><span class="sy">.</span><span class="i">configure</span><span class="h"> </span><span class="st">do</span><span class="h"> </span><span class="o">|</span><span class="i">config</span><span class="o">|</span></div><div class="crayon-line crayon-striped-line" id="crayon-51883478477d9-4"><span class="h">&nbsp;&nbsp;</span><span class="v">config</span><span class="sy">.</span><span class="i">include</span><span class="h"> </span><span class="i">Capybara</span><span class="o">::</span><span class="i">DSL</span></div><div class="crayon-line crayon-marked-line crayon-top crayon-bottom" id="crayon-51883478477d9-5"><span class="h">&nbsp;&nbsp;</span><span class="v">config</span><span class="sy">.</span><span class="i">include</span><span class="h"> </span><span class="i">TestHelper</span></div><div class="crayon-line crayon-striped-line" id="crayon-51883478477d9-6"><span class="st">end</span></div></div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+<!-- [Format Time: 0.0014 seconds] -->
+<p></p>
+<p>With these changes in place, I can now change the test execution in spike_capybara_spec.rb to read like this:</p>
+<p></p><!-- Crayon Syntax Highlighter v2.2.0 -->
+
+		<div id="crayon-5188347847bc2" class="crayon-syntax crayon-theme-classic crayon-font-monaco crayon-os-pc print-yes" data-settings=" minimize scroll-mouseover" style=" margin-top: 12px; margin-bottom: 12px; float: none; clear: both; font-size: 12px !important; line-height: 15px !important;">
+		
+			<div class="crayon-toolbar" data-settings=" mouseover overlay hide delay" style="font-size: 12px !important;height: 18px !important; line-height: 18px !important;"><span class="crayon-title"></span>
+			<div class="crayon-tools" style="font-size: 12px !important;height: 18px !important; line-height: 18px !important;"><div class="crayon-button crayon-nums-button" title="Toggle Line Numbers"><div class="crayon-button-icon"></div></div><div class="crayon-button crayon-plain-button" title="Toggle Plain Code"><div class="crayon-button-icon"></div></div><div class="crayon-button crayon-wrap-button" title="Toggle Line Wrap"><div class="crayon-button-icon"></div></div><div class="crayon-button crayon-expand-button" title="Expand Code"><div class="crayon-button-icon"></div></div><div class="crayon-button crayon-copy-button" title="Expand Code"><div class="crayon-button-icon"></div></div><div class="crayon-button crayon-popup-button" title="Open Code In New Window"><div class="crayon-button-icon"></div></div><span class="crayon-language">Ruby</span></div></div>
+			<div class="crayon-info" style="min-height: 16.8px !important; line-height: 16.8px !important;"></div>
+			<div class="crayon-plain-wrap"><textarea wrap="off" class="crayon-plain print-no" data-settings="dblclick" readonly style="-moz-tab-size:2; -o-tab-size:2; -webkit-tab-size:2; tab-size:2; font-size: 12px !important; line-height: 15px !important;">
+describe "Searching for a video" do
+  it "allows searches for general terms" do
+    visit_youtube
+    search_for_term("text adventures")
+    verify_I_see("GET LAMP: The Text Adventure Documentary")
+  end
+end</textarea></div>
+			<div class="crayon-main" style="">
+				<table class="crayon-table">
+					<tr class="crayon-row">
+				<td class="crayon-nums " data-settings="show">
+					<div class="crayon-nums-content" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-num" data-line="crayon-5188347847bc2-1">1</div><div class="crayon-num crayon-striped-num" data-line="crayon-5188347847bc2-2">2</div><div class="crayon-num" data-line="crayon-5188347847bc2-3">3</div><div class="crayon-num crayon-striped-num" data-line="crayon-5188347847bc2-4">4</div><div class="crayon-num" data-line="crayon-5188347847bc2-5">5</div><div class="crayon-num crayon-striped-num" data-line="crayon-5188347847bc2-6">6</div><div class="crayon-num" data-line="crayon-5188347847bc2-7">7</div></div>
+				</td>
+						<td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-line" id="crayon-5188347847bc2-1">describe "Searching for a video" do</div><div class="crayon-line crayon-striped-line" id="crayon-5188347847bc2-2">&nbsp;&nbsp;it "allows searches for general terms" do</div><div class="crayon-line" id="crayon-5188347847bc2-3">&nbsp;&nbsp;&nbsp;&nbsp;visit_youtube</div><div class="crayon-line crayon-striped-line" id="crayon-5188347847bc2-4">&nbsp;&nbsp;&nbsp;&nbsp;search_for_term("text adventures")</div><div class="crayon-line" id="crayon-5188347847bc2-5">&nbsp;&nbsp;&nbsp;&nbsp;verify_I_see("GET LAMP: The Text Adventure Documentary")</div><div class="crayon-line crayon-striped-line" id="crayon-5188347847bc2-6">&nbsp;&nbsp;end</div><div class="crayon-line" id="crayon-5188347847bc2-7">end</div></div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+<!-- [Format Time: 0.0003 seconds] -->
+<p></p>
+<p>Functionally, I&#8217;m doing the same exact thing I was before. The difference is in how I&#8217;ve structured my behavioral logic to make it a little more generic. In truth, I&#8217;m still really tied to whatever site I&#8217;m testing. As just one example, look at the search_for_term method in test_helper.rb. This method contains literal identifiers (&#8216;search_query&#8217; and &#8216;search-btn&#8217;) that are very specific to YouTube. A better approach might be to have that information passed in to the method. But let&#8217;s think about that. Let&#8217;s say I changed the method to look like this:</p>
+<p></p><!-- Crayon Syntax Highlighter v2.2.0 -->
+
+		<div id="crayon-5188347847faa" class="crayon-syntax crayon-theme-classic crayon-font-monaco crayon-os-pc print-yes" data-settings=" minimize scroll-mouseover" style=" margin-top: 12px; margin-bottom: 12px; float: none; clear: both; font-size: 12px !important; line-height: 15px !important;">
+		
+			<div class="crayon-toolbar" data-settings=" mouseover overlay hide delay" style="font-size: 12px !important;height: 18px !important; line-height: 18px !important;"><span class="crayon-title"></span>
+			<div class="crayon-tools" style="font-size: 12px !important;height: 18px !important; line-height: 18px !important;"><div class="crayon-button crayon-nums-button" title="Toggle Line Numbers"><div class="crayon-button-icon"></div></div><div class="crayon-button crayon-plain-button" title="Toggle Plain Code"><div class="crayon-button-icon"></div></div><div class="crayon-button crayon-wrap-button" title="Toggle Line Wrap"><div class="crayon-button-icon"></div></div><div class="crayon-button crayon-expand-button" title="Expand Code"><div class="crayon-button-icon"></div></div><div class="crayon-button crayon-copy-button" title="Expand Code"><div class="crayon-button-icon"></div></div><div class="crayon-button crayon-popup-button" title="Open Code In New Window"><div class="crayon-button-icon"></div></div><span class="crayon-language">Ruby</span></div></div>
+			<div class="crayon-info" style="min-height: 16.8px !important; line-height: 16.8px !important;"></div>
+			<div class="crayon-plain-wrap"><textarea wrap="off" class="crayon-plain print-no" data-settings="dblclick" readonly style="-moz-tab-size:2; -o-tab-size:2; -webkit-tab-size:2; tab-size:2; font-size: 12px !important; line-height: 15px !important;">
+def search_for_term(text, widget_id_1, widget_id_2)
+  fill_in(element1, :with =&gt; text)
+  click_button(element2)
+end</textarea></div>
+			<div class="crayon-main" style="">
+				<table class="crayon-table">
+					<tr class="crayon-row">
+				<td class="crayon-nums " data-settings="show">
+					<div class="crayon-nums-content" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-num" data-line="crayon-5188347847faa-1">1</div><div class="crayon-num crayon-striped-num" data-line="crayon-5188347847faa-2">2</div><div class="crayon-num" data-line="crayon-5188347847faa-3">3</div><div class="crayon-num crayon-striped-num" data-line="crayon-5188347847faa-4">4</div></div>
+				</td>
+						<td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-line" id="crayon-5188347847faa-1"><span class="r">def</span><span class="h"> </span><span class="e">search_for_term</span><span class="sy">(</span><span class="i">text</span><span class="sy">,</span><span class="h"> </span><span class="i">widget_id_1</span><span class="sy">,</span><span class="h"> </span><span class="i">widget_id_2</span><span class="sy">)</span></div><div class="crayon-line crayon-striped-line" id="crayon-5188347847faa-2"><span class="h">&nbsp;&nbsp;</span><span class="e">fill_in</span><span class="sy">(</span><span class="i">element1</span><span class="sy">,</span><span class="h"> </span><span class="o">:</span><span class="v">with</span><span class="h"> </span><span class="o">=</span><span class="o">&gt;</span><span class="h"> </span><span class="i">text</span><span class="sy">)</span></div><div class="crayon-line" id="crayon-5188347847faa-3"><span class="h">&nbsp;&nbsp;</span><span class="e">click_button</span><span class="sy">(</span><span class="i">element2</span><span class="sy">)</span></div><div class="crayon-line crayon-striped-line" id="crayon-5188347847faa-4"><span class="st">end</span></div></div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+<!-- [Format Time: 0.0015 seconds] -->
+<p></p>
+<p>That would mean I could make the following call from my test (in spike_capybara_spec.rb):</p>
+<p></p><!-- Crayon Syntax Highlighter v2.2.0 -->
+
+		<div id="crayon-5188347848391" class="crayon-syntax crayon-theme-classic crayon-font-monaco crayon-os-pc print-yes" data-settings=" minimize scroll-mouseover" style=" margin-top: 12px; margin-bottom: 12px; float: none; clear: both; font-size: 12px !important; line-height: 15px !important;">
+		
+			<div class="crayon-toolbar" data-settings=" mouseover overlay hide delay" style="font-size: 12px !important;height: 18px !important; line-height: 18px !important;"><span class="crayon-title"></span>
+			<div class="crayon-tools" style="font-size: 12px !important;height: 18px !important; line-height: 18px !important;"><div class="crayon-button crayon-nums-button" title="Toggle Line Numbers"><div class="crayon-button-icon"></div></div><div class="crayon-button crayon-plain-button" title="Toggle Plain Code"><div class="crayon-button-icon"></div></div><div class="crayon-button crayon-wrap-button" title="Toggle Line Wrap"><div class="crayon-button-icon"></div></div><div class="crayon-button crayon-expand-button" title="Expand Code"><div class="crayon-button-icon"></div></div><div class="crayon-button crayon-copy-button" title="Expand Code"><div class="crayon-button-icon"></div></div><div class="crayon-button crayon-popup-button" title="Open Code In New Window"><div class="crayon-button-icon"></div></div><span class="crayon-language">Ruby</span></div></div>
+			<div class="crayon-info" style="min-height: 16.8px !important; line-height: 16.8px !important;"></div>
+			<div class="crayon-plain-wrap"><textarea wrap="off" class="crayon-plain print-no" data-settings="dblclick" readonly style="-moz-tab-size:2; -o-tab-size:2; -webkit-tab-size:2; tab-size:2; font-size: 12px !important; line-height: 15px !important;">
+search_for_term("text adventures", "search_query", "search-btn")</textarea></div>
+			<div class="crayon-main" style="">
+				<table class="crayon-table">
+					<tr class="crayon-row">
+				<td class="crayon-nums " data-settings="show">
+					<div class="crayon-nums-content" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-num" data-line="crayon-5188347848391-1">1</div></div>
+				</td>
+						<td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-line" id="crayon-5188347848391-1"><span class="e">search_for_term</span><span class="sy">(</span><span class="s">"text adventures"</span><span class="sy">,</span><span class="h"> </span><span class="s">"search_query"</span><span class="sy">,</span><span class="h"> </span><span class="s">"search-btn"</span><span class="sy">)</span></div></div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+<!-- [Format Time: 0.0006 seconds] -->
+<p></p>
+<p>Can I get a show of hands for those who think this is awful? Not only does this take away the readability of my test but it still ties me to the implementation since the search_for_term assumes that I&#8217;m going to fill in one field and then click one button. Maybe that&#8217;s true in many cases, but what if there are multiple text fields to fill in? Or what if there is a drop-down to select categories of things to be searched on? Clearly I haven&#8217;t done myself any favors here. Okay, so what if I made an even more specific method in test_helper.rb:</p>
+<p></p><!-- Crayon Syntax Highlighter v2.2.0 -->
+
+		<div id="crayon-5188347848779" class="crayon-syntax crayon-theme-classic crayon-font-monaco crayon-os-pc print-yes" data-settings=" minimize scroll-mouseover" style=" margin-top: 12px; margin-bottom: 12px; float: none; clear: both; font-size: 12px !important; line-height: 15px !important;">
+		
+			<div class="crayon-toolbar" data-settings=" mouseover overlay hide delay" style="font-size: 12px !important;height: 18px !important; line-height: 18px !important;"><span class="crayon-title"></span>
+			<div class="crayon-tools" style="font-size: 12px !important;height: 18px !important; line-height: 18px !important;"><div class="crayon-button crayon-nums-button" title="Toggle Line Numbers"><div class="crayon-button-icon"></div></div><div class="crayon-button crayon-plain-button" title="Toggle Plain Code"><div class="crayon-button-icon"></div></div><div class="crayon-button crayon-wrap-button" title="Toggle Line Wrap"><div class="crayon-button-icon"></div></div><div class="crayon-button crayon-expand-button" title="Expand Code"><div class="crayon-button-icon"></div></div><div class="crayon-button crayon-copy-button" title="Expand Code"><div class="crayon-button-icon"></div></div><div class="crayon-button crayon-popup-button" title="Open Code In New Window"><div class="crayon-button-icon"></div></div><span class="crayon-language">Ruby</span></div></div>
+			<div class="crayon-info" style="min-height: 16.8px !important; line-height: 16.8px !important;"></div>
+			<div class="crayon-plain-wrap"><textarea wrap="off" class="crayon-plain print-no" data-settings="dblclick" readonly style="-moz-tab-size:2; -o-tab-size:2; -webkit-tab-size:2; tab-size:2; font-size: 12px !important; line-height: 15px !important;">
+def search_for_youtube_videos_about(text)
+  visit "http://www.youtube.com"
+  fill_in('search_query', :with =&gt; text)
+  click_button('search-btn')
+end</textarea></div>
+			<div class="crayon-main" style="">
+				<table class="crayon-table">
+					<tr class="crayon-row">
+				<td class="crayon-nums " data-settings="show">
+					<div class="crayon-nums-content" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-num" data-line="crayon-5188347848779-1">1</div><div class="crayon-num crayon-striped-num" data-line="crayon-5188347848779-2">2</div><div class="crayon-num" data-line="crayon-5188347848779-3">3</div><div class="crayon-num crayon-striped-num" data-line="crayon-5188347848779-4">4</div><div class="crayon-num" data-line="crayon-5188347848779-5">5</div></div>
+				</td>
+						<td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-line" id="crayon-5188347848779-1"><span class="r">def</span><span class="h"> </span><span class="e">search_for_youtube_videos_about</span><span class="sy">(</span><span class="i">text</span><span class="sy">)</span></div><div class="crayon-line crayon-striped-line" id="crayon-5188347848779-2"><span class="h">&nbsp;&nbsp;</span><span class="i">visit</span><span class="h"> </span><span class="s">"http://www.youtube.com"</span></div><div class="crayon-line" id="crayon-5188347848779-3"><span class="h">&nbsp;&nbsp;</span><span class="e">fill_in</span><span class="sy">(</span><span class="s">'search_query'</span><span class="sy">,</span><span class="h"> </span><span class="o">:</span><span class="v">with</span><span class="h"> </span><span class="o">=</span><span class="o">&gt;</span><span class="h"> </span><span class="i">text</span><span class="sy">)</span></div><div class="crayon-line crayon-striped-line" id="crayon-5188347848779-4"><span class="h">&nbsp;&nbsp;</span><span class="e">click_button</span><span class="sy">(</span><span class="s">'search-btn'</span><span class="sy">)</span></div><div class="crayon-line" id="crayon-5188347848779-5"><span class="st">end</span></div></div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+<!-- [Format Time: 0.0015 seconds] -->
+<p></p>
+<p>Note the change in name of the method as well as the addition of the visit call. That means my test logic in spike_capybara_spec.rb can now be this:</p>
+<p></p><!-- Crayon Syntax Highlighter v2.2.0 -->
+
+		<div id="crayon-5188347848b61" class="crayon-syntax crayon-theme-classic crayon-font-monaco crayon-os-pc print-yes" data-settings=" minimize scroll-mouseover" style=" margin-top: 12px; margin-bottom: 12px; float: none; clear: both; font-size: 12px !important; line-height: 15px !important;">
+		
+			<div class="crayon-toolbar" data-settings=" mouseover overlay hide delay" style="font-size: 12px !important;height: 18px !important; line-height: 18px !important;"><span class="crayon-title"></span>
+			<div class="crayon-tools" style="font-size: 12px !important;height: 18px !important; line-height: 18px !important;"><div class="crayon-button crayon-nums-button" title="Toggle Line Numbers"><div class="crayon-button-icon"></div></div><div class="crayon-button crayon-plain-button" title="Toggle Plain Code"><div class="crayon-button-icon"></div></div><div class="crayon-button crayon-wrap-button" title="Toggle Line Wrap"><div class="crayon-button-icon"></div></div><div class="crayon-button crayon-expand-button" title="Expand Code"><div class="crayon-button-icon"></div></div><div class="crayon-button crayon-copy-button" title="Expand Code"><div class="crayon-button-icon"></div></div><div class="crayon-button crayon-popup-button" title="Open Code In New Window"><div class="crayon-button-icon"></div></div><span class="crayon-language">Ruby</span></div></div>
+			<div class="crayon-info" style="min-height: 16.8px !important; line-height: 16.8px !important;"></div>
+			<div class="crayon-plain-wrap"><textarea wrap="off" class="crayon-plain print-no" data-settings="dblclick" readonly style="-moz-tab-size:2; -o-tab-size:2; -webkit-tab-size:2; tab-size:2; font-size: 12px !important; line-height: 15px !important;">
+describe "Searching for a video" do
+  it "allows searches for general terms" do
+    search_for_youtube_videos_about("text adventures")
+    verify_I_see("GET LAMP: The Text Adventure Documentary")
+  end
+end</textarea></div>
+			<div class="crayon-main" style="">
+				<table class="crayon-table">
+					<tr class="crayon-row">
+				<td class="crayon-nums " data-settings="show">
+					<div class="crayon-nums-content" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-num" data-line="crayon-5188347848b61-1">1</div><div class="crayon-num crayon-striped-num" data-line="crayon-5188347848b61-2">2</div><div class="crayon-num crayon-marked-num crayon-top crayon-bottom" data-line="crayon-5188347848b61-3">3</div><div class="crayon-num crayon-striped-num" data-line="crayon-5188347848b61-4">4</div><div class="crayon-num" data-line="crayon-5188347848b61-5">5</div><div class="crayon-num crayon-striped-num" data-line="crayon-5188347848b61-6">6</div></div>
+				</td>
+						<td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-line" id="crayon-5188347848b61-1"><span class="i">describe</span><span class="h"> </span><span class="s">"Searching for a video"</span><span class="h"> </span><span class="st">do</span></div><div class="crayon-line crayon-striped-line" id="crayon-5188347848b61-2"><span class="h">&nbsp;&nbsp;</span><span class="i">it</span><span class="h"> </span><span class="s">"allows searches for general terms"</span><span class="h"> </span><span class="st">do</span></div><div class="crayon-line crayon-marked-line crayon-top crayon-bottom" id="crayon-5188347848b61-3"><span class="h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="e">search_for_youtube_videos_about</span><span class="sy">(</span><span class="s">"text adventures"</span><span class="sy">)</span></div><div class="crayon-line crayon-striped-line" id="crayon-5188347848b61-4"><span class="h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="e">verify_I_see</span><span class="sy">(</span><span class="s">"GET LAMP: The Text Adventure Documentary"</span><span class="sy">)</span></div><div class="crayon-line" id="crayon-5188347848b61-5"><span class="h">&nbsp;&nbsp;</span><span class="st">end</span></div><div class="crayon-line crayon-striped-line" id="crayon-5188347848b61-6"><span class="st">end</span></div></div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+<!-- [Format Time: 0.0013 seconds] -->
+<p></p>
+<p>Notice how this lets me be more specific about my intent in the test and also lets me incorporate more YouTube-specific logic in the method being called that executes the test, such as that visit part. (This would mean I don&#8217;t need the visit_youtube method in test_helper.rb.) If I later had a specific method for, say, Amazon then I could have a &#8220;search_for_books_titled&#8221; method or something like that.</p>
+<p>Here&#8217;s something else to consider. Look at the specification-level statements of RSpec:</p>
+<p></p><!-- Crayon Syntax Highlighter v2.2.0 -->
+
+		<div id="crayon-5188347848f49" class="crayon-syntax crayon-theme-classic crayon-font-monaco crayon-os-pc print-yes" data-settings=" minimize scroll-mouseover" style=" margin-top: 12px; margin-bottom: 12px; float: none; clear: both; font-size: 12px !important; line-height: 15px !important;">
+		
+			<div class="crayon-toolbar" data-settings=" mouseover overlay hide delay" style="font-size: 12px !important;height: 18px !important; line-height: 18px !important;"><span class="crayon-title"></span>
+			<div class="crayon-tools" style="font-size: 12px !important;height: 18px !important; line-height: 18px !important;"><div class="crayon-button crayon-nums-button" title="Toggle Line Numbers"><div class="crayon-button-icon"></div></div><div class="crayon-button crayon-plain-button" title="Toggle Plain Code"><div class="crayon-button-icon"></div></div><div class="crayon-button crayon-wrap-button" title="Toggle Line Wrap"><div class="crayon-button-icon"></div></div><div class="crayon-button crayon-expand-button" title="Expand Code"><div class="crayon-button-icon"></div></div><div class="crayon-button crayon-copy-button" title="Expand Code"><div class="crayon-button-icon"></div></div><div class="crayon-button crayon-popup-button" title="Open Code In New Window"><div class="crayon-button-icon"></div></div><span class="crayon-language">Ruby</span></div></div>
+			<div class="crayon-info" style="min-height: 16.8px !important; line-height: 16.8px !important;"></div>
+			<div class="crayon-plain-wrap"><textarea wrap="off" class="crayon-plain print-no" data-settings="dblclick" readonly style="-moz-tab-size:2; -o-tab-size:2; -webkit-tab-size:2; tab-size:2; font-size: 12px !important; line-height: 15px !important;">
+describe "Searching for a video" do
+  it "allows searches for general terms" do
+  ...</textarea></div>
+			<div class="crayon-main" style="">
+				<table class="crayon-table">
+					<tr class="crayon-row">
+				<td class="crayon-nums " data-settings="show">
+					<div class="crayon-nums-content" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-num" data-line="crayon-5188347848f49-1">1</div><div class="crayon-num crayon-striped-num" data-line="crayon-5188347848f49-2">2</div><div class="crayon-num" data-line="crayon-5188347848f49-3">3</div></div>
+				</td>
+						<td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-line" id="crayon-5188347848f49-1"><span class="i">describe</span><span class="h"> </span><span class="s">"Searching for a video"</span><span class="h"> </span><span class="st">do</span></div><div class="crayon-line crayon-striped-line" id="crayon-5188347848f49-2"><span class="h">&nbsp;&nbsp;</span><span class="i">it</span><span class="h"> </span><span class="s">"allows searches for general terms"</span><span class="h"> </span><span class="st">do</span></div><div class="crayon-line" id="crayon-5188347848f49-3"><span class="h">&nbsp;&nbsp;</span><span class="sy">.</span><span class="sy">.</span><span class="sy">.</span></div></div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+<!-- [Format Time: 0.0009 seconds] -->
+<p></p>
+<p>Reading those statements, they sort of match the exact information of the test method I wrote:</p>
+<p></p><!-- Crayon Syntax Highlighter v2.2.0 -->
+
+		<div id="crayon-5188347849331" class="crayon-syntax crayon-theme-classic crayon-font-monaco crayon-os-pc print-yes" data-settings=" minimize scroll-mouseover" style=" margin-top: 12px; margin-bottom: 12px; float: none; clear: both; font-size: 12px !important; line-height: 15px !important;">
+		
+			<div class="crayon-toolbar" data-settings=" mouseover overlay hide delay" style="font-size: 12px !important;height: 18px !important; line-height: 18px !important;"><span class="crayon-title"></span>
+			<div class="crayon-tools" style="font-size: 12px !important;height: 18px !important; line-height: 18px !important;"><div class="crayon-button crayon-nums-button" title="Toggle Line Numbers"><div class="crayon-button-icon"></div></div><div class="crayon-button crayon-plain-button" title="Toggle Plain Code"><div class="crayon-button-icon"></div></div><div class="crayon-button crayon-wrap-button" title="Toggle Line Wrap"><div class="crayon-button-icon"></div></div><div class="crayon-button crayon-expand-button" title="Expand Code"><div class="crayon-button-icon"></div></div><div class="crayon-button crayon-copy-button" title="Expand Code"><div class="crayon-button-icon"></div></div><div class="crayon-button crayon-popup-button" title="Open Code In New Window"><div class="crayon-button-icon"></div></div><span class="crayon-language">Ruby</span></div></div>
+			<div class="crayon-info" style="min-height: 16.8px !important; line-height: 16.8px !important;"></div>
+			<div class="crayon-plain-wrap"><textarea wrap="off" class="crayon-plain print-no" data-settings="dblclick" readonly style="-moz-tab-size:2; -o-tab-size:2; -webkit-tab-size:2; tab-size:2; font-size: 12px !important; line-height: 15px !important;">
+search_for_youtube_videos_about("text adventures")</textarea></div>
+			<div class="crayon-main" style="">
+				<table class="crayon-table">
+					<tr class="crayon-row">
+				<td class="crayon-nums " data-settings="show">
+					<div class="crayon-nums-content" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-num" data-line="crayon-5188347849331-1">1</div></div>
+				</td>
+						<td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-line" id="crayon-5188347849331-1"><span class="e">search_for_youtube_videos_about</span><span class="sy">(</span><span class="s">"text adventures"</span><span class="sy">)</span></div></div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+<!-- [Format Time: 0.0004 seconds] -->
+<p></p>
+<p>I&#8217;m kind of saying the same thing over again in the method that I said in the RSpec statements. I&#8217;m saying it once as a specification and then again as part of a method naming scheme. You might wonder if the two could be combined in some sense, such that the natural language parts <em>are</em>, in fact, the executable code. That&#8217;s the basis of using a tool like Cucumber, which I&#8217;ll be covering in some other posts.</p>
+<p>Clearly I&#8217;ve just scratched the surface here, not only in terms of two specific solutions (RSpec and Capybara) but also in terms of writing good automation test logic. My goal in taking you through this was to give you an idea of how you might start thinking about a framework to your testing. You can see here a clear separation of files that hold different bits of logic, the idea of separating intent from implementation, and the idea of how to frame tests so that they communicate their business actions at a high-level while relegating lower-level implementation details to a different area. I&#8217;ve found these aspects to be the thinking battles I engage in most when I&#8217;m considering how to build effective and efficient automated testing frameworks.</p>
+											</div><!-- .entry-content -->
+
+					<div id="entry-author-info">
+						<div id="author-avatar">
+							<img alt='' src='http://0.gravatar.com/avatar/a3b6c2d0b2bafdb9ad9cdf782873204d?s=60&amp;d=http%3A%2F%2F0.gravatar.com%2Favatar%2Fad516503a11cd5ca435acc9bb6523536%3Fs%3D60&amp;r=PG' class='avatar avatar-60 photo' height='60' width='60' />						</div><!-- #author-avatar -->
+						<div id="author-description">
+							<h2>About Jeff Nyman</h2>
+							Anything I put on this site is essentially an approximation of the truth. You will be getting a particular view of myself ... and this is just the view that I choose to present to you. If you've never met me before in person, please realize that I'm not the same in person as I am in writing. That's because I can only put part of myself down into words.
+
+If you have met me before in person then I'd ask you to consider that the view you've formed that way and the view you build up by reading what I say here may, in fact, both be true. I'd advise that you not automatically discard either viewpoint when they conflict or accept either as truth when they agree.							<div id="author-link">
+								<a href="http://testerstories.com/?author=1">
+									View all posts by Jeff Nyman <span class="meta-nav">&rarr;</span>								</a>
+							</div><!-- #author-link	-->
+						</div><!-- #author-description -->
+					</div><!-- #entry-author-info -->
+
+					<div class="entry-utility">
+												This entry was posted in <a href="http://testerstories.com/?cat=8" title="View all posts in Capybara" rel="category">Capybara</a>, <a href="http://testerstories.com/?cat=5" title="View all posts in RSpec" rel="category">RSpec</a>. Bookmark the <a href="http://testerstories.com/?p=30" title="Permalink to Using RSpec and Capybara Without Rails" rel="bookmark">permalink</a>.											</div><!-- .entry-utility -->
+				</article><!-- #post-## -->
+
+				<nav id="nav-below" class="navigation">
+					<div class="nav-previous"><a href="http://testerstories.com/?p=21" rel="prev"><span class="meta-nav">&larr;</span> Spiking With Open Source Testing Tools</a></div>
+					<div class="nav-next"><a href="http://testerstories.com/?p=38" rel="next">Testers Relax &#8230; You Don&#8217;t Really Assure Quality <span class="meta-nav">&rarr;</span></a></div>
+				</nav><!-- #nav-below -->
+
+							<div id="comments">
+
+			<h3 id="comments-title">2 Responses to <em>Using RSpec and Capybara Without Rails</em></h3>
+
+	
+			<ol class="commentlist">
+						<li class="comment even thread-even depth-1" id="li-comment-4769">
+			<div id="comment-4769">
+			<div class="comment-author vcard">
+				<img alt='' src='http://0.gravatar.com/avatar/4ef5145b8bb4fa28332c411a3faaf2d4?s=40&amp;d=http%3A%2F%2F0.gravatar.com%2Favatar%2Fad516503a11cd5ca435acc9bb6523536%3Fs%3D40&amp;r=PG' class='avatar avatar-40 photo' height='40' width='40' />				<cite class="fn">@ahsan_s</cite> <span class="says">says:</span>			</div><!-- .comment-author .vcard -->
+				
+			<div class="comment-meta commentmetadata"><a href="http://testerstories.com/?p=30#comment-4769">
+				27 October 2012 at 3:46 pm</a>			</div><!-- .comment-meta .commentmetadata -->
+	
+			<div class="comment-body"><p>Thanks for the great, easy-to-understand articles. I just tweeted two of your articles.</p>
+</div>
+	
+			<div class="reply">
+				<a class='comment-reply-link' href='/?p=30&#038;replytocom=4769#respond' onclick='return addComment.moveForm("comment-4769", "4769", "respond", "30")'>Reply</a>			</div><!-- .reply -->
+		</div><!-- #comment-##  -->
+	
+		</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-9872">
+			<div id="comment-9872">
+			<div class="comment-author vcard">
+				<img alt='' src='http://1.gravatar.com/avatar/ffb10448e0b313eac3f446447d1e4a7d?s=40&amp;d=http%3A%2F%2F1.gravatar.com%2Favatar%2Fad516503a11cd5ca435acc9bb6523536%3Fs%3D40&amp;r=PG' class='avatar avatar-40 photo' height='40' width='40' />				<cite class="fn">Cory</cite> <span class="says">says:</span>			</div><!-- .comment-author .vcard -->
+				
+			<div class="comment-meta commentmetadata"><a href="http://testerstories.com/?p=30#comment-9872">
+				21 March 2013 at 1:45 pm</a>			</div><!-- .comment-meta .commentmetadata -->
+	
+			<div class="comment-body"><p>Thank you for the excellent tutorial.  It is the best I have found for an introduction on this topic.</p>
+</div>
+	
+			<div class="reply">
+				<a class='comment-reply-link' href='/?p=30&#038;replytocom=9872#respond' onclick='return addComment.moveForm("comment-9872", "9872", "respond", "30")'>Reply</a>			</div><!-- .reply -->
+		</div><!-- #comment-##  -->
+	
+		</li>
+			</ol>
+
+	
+
+
+								<div id="respond">
+				<h3 id="reply-title">Leave a Reply <small><a rel="nofollow" id="cancel-comment-reply-link" href="/?p=30#respond" style="display:none;">Cancel reply</a></small></h3>
+									<form action="http://testerstories.com/wp-comments-post.php" method="post" id="commentform">
+																			<p class="comment-notes">Your email address will not be published. Required fields are marked <span class="required">*</span></p>							<p class="comment-form-author"><label for="author">Name <span class="required">*</span></label> <input id="author" name="author" type="text" value="" size="30" aria-required='true' /></p>
+<p class="comment-form-email"><label for="email">Email <span class="required">*</span></label> <input id="email" name="email" type="text" value="" size="30" aria-required='true' /></p>
+<p class="comment-form-url"><label for="url">Website</label><input id="url" name="url" type="text" value="" size="30" /></p>
+												<div id="wp-comment-wrap" class="wp-core-ui wp-editor-wrap tmce-active"><link rel='stylesheet' id='editor-buttons-css'  href='http://testerstories.com/wp-includes/css/editor.min.css?ver=3.5.1' type='text/css' media='all' />
+<div id="wp-comment-editor-tools" class="wp-editor-tools hide-if-no-js"><a id="comment-html" class="wp-switch-editor switch-html" onclick="switchEditors.switchto(this);">Text</a>
+<a id="comment-tmce" class="wp-switch-editor switch-tmce" onclick="switchEditors.switchto(this);">Visual</a>
+</div>
+<div id="wp-comment-editor-container" class="wp-editor-container"><textarea class="wp-editor-area" rows="20" cols="40" name="comment" id="comment"></textarea></div>
+</div>
+
+						<p class="form-allowed-tags">You may use these <abbr title="HyperText Markup Language">HTML</abbr> tags and attributes:  <code>&lt;a href=&quot;&quot; title=&quot;&quot;&gt; &lt;abbr title=&quot;&quot;&gt; &lt;acronym title=&quot;&quot;&gt; &lt;b&gt; &lt;blockquote cite=&quot;&quot;&gt; &lt;cite&gt; &lt;code class=&quot;&quot; title=&quot;&quot; data-url=&quot;&quot;&gt; &lt;del datetime=&quot;&quot;&gt; &lt;em&gt; &lt;i&gt; &lt;q cite=&quot;&quot;&gt; &lt;strike&gt; &lt;strong&gt; &lt;pre class=&quot;&quot; title=&quot;&quot; data-url=&quot;&quot;&gt; &lt;span class=&quot;&quot; title=&quot;&quot; data-url=&quot;&quot;&gt; </code></p>						<p class="form-submit">
+							<input name="submit" type="submit" id="submit" value="Post Comment" />
+							<input type='hidden' name='comment_post_ID' value='30' id='comment_post_ID' />
+<input type='hidden' name='comment_parent' id='comment_parent' value='0' />
+						</p>
+						<p style="display: none;"><input type="hidden" id="akismet_comment_nonce" name="akismet_comment_nonce" value="e11bbf2723" /></p>					</form>
+							</div><!-- #respond -->
+						
+</div><!-- #comments -->
+
+
+		</div><!-- #main -->
+			<div id="sidebar" class="widget-area threecol last " role="complementary">
+			<ul class="xoxo">
+
+<li id="ajax-quick-subscribe" class="widget-container widget_quick_subscribe"><h3 class="widget-title">Subscribe</h3>Enter your email to subscribe to future updates<div id="QSWidgetDiv" class="QSWidgetDiv"><form name='widget_quick_subscribe_form' id='widget_quick_subscribe_form'><input type='email' name='QS_user_email_widget' id='QS_user_email_widget' placeholder='email@email.com' onkeypress='return checkForEnter(event, "QS_user_email_widget", "QSWidgetDiv"); return false;'><input type='button' value='subscribe!' id='_qsSubmit' class='widget_qsSubmit' onClick='submitQuickSubscribe("QS_user_email_widget", "QSWidgetDiv");'></form></div>			
+			</li><li id="archives-3" class="widget-container widget_archive"><h3 class="widget-title">Archives</h3>		<ul>
+			<li><a href='http://testerstories.com/?m=201303' title='March 2013'>March 2013</a>&nbsp;(5)</li>
+	<li><a href='http://testerstories.com/?m=201301' title='January 2013'>January 2013</a>&nbsp;(5)</li>
+	<li><a href='http://testerstories.com/?m=201212' title='December 2012'>December 2012</a>&nbsp;(2)</li>
+	<li><a href='http://testerstories.com/?m=201210' title='October 2012'>October 2012</a>&nbsp;(1)</li>
+	<li><a href='http://testerstories.com/?m=201209' title='September 2012'>September 2012</a>&nbsp;(1)</li>
+	<li><a href='http://testerstories.com/?m=201208' title='August 2012'>August 2012</a>&nbsp;(1)</li>
+	<li><a href='http://testerstories.com/?m=201207' title='July 2012'>July 2012</a>&nbsp;(9)</li>
+	<li><a href='http://testerstories.com/?m=201206' title='June 2012'>June 2012</a>&nbsp;(6)</li>
+	<li><a href='http://testerstories.com/?m=201205' title='May 2012'>May 2012</a>&nbsp;(1)</li>
+	<li><a href='http://testerstories.com/?m=201204' title='April 2012'>April 2012</a>&nbsp;(2)</li>
+	<li><a href='http://testerstories.com/?m=201203' title='March 2012'>March 2012</a>&nbsp;(4)</li>
+	<li><a href='http://testerstories.com/?m=201202' title='February 2012'>February 2012</a>&nbsp;(4)</li>
+	<li><a href='http://testerstories.com/?m=201201' title='January 2012'>January 2012</a>&nbsp;(4)</li>
+	<li><a href='http://testerstories.com/?m=201112' title='December 2011'>December 2011</a>&nbsp;(8)</li>
+	<li><a href='http://testerstories.com/?m=201111' title='November 2011'>November 2011</a>&nbsp;(10)</li>
+	<li><a href='http://testerstories.com/?m=201110' title='October 2011'>October 2011</a>&nbsp;(10)</li>
+	<li><a href='http://testerstories.com/?m=201109' title='September 2011'>September 2011</a>&nbsp;(10)</li>
+	<li><a href='http://testerstories.com/?m=201108' title='August 2011'>August 2011</a>&nbsp;(10)</li>
+		</ul>
+</li><li id="meta-3" class="widget-container widget_meta"><h3 class="widget-title">Blog</h3>			<ul>
+						<li><a href="http://testerstories.com/wp-login.php">Log in</a></li>
+			<li><a href="http://testerstories.com/?feed=rss2" title="Syndicate this site using RSS 2.0">Entries <abbr title="Really Simple Syndication">RSS</abbr></a></li>
+			<li><a href="http://testerstories.com/?feed=comments-rss2" title="The latest comments to all posts in RSS">Comments <abbr title="Really Simple Syndication">RSS</abbr></a></li>
+			<li><a href="http://wordpress.org/" title="Powered by WordPress, state-of-the-art semantic personal publishing platform.">WordPress.org</a></li>
+						</ul>
+</li><li id="categories-3" class="widget-container widget_categories"><h3 class="widget-title">Categories</h3>		<ul>
+	<li class="cat-item cat-item-13"><a href="http://testerstories.com/?cat=13" title="View all posts filed under BDD">BDD</a> (5)
+</li>
+	<li class="cat-item cat-item-8"><a href="http://testerstories.com/?cat=8" title="View all posts filed under Capybara">Capybara</a> (9)
+</li>
+	<li class="cat-item cat-item-15"><a href="http://testerstories.com/?cat=15" title="View all posts filed under Communication">Communication</a> (6)
+</li>
+	<li class="cat-item cat-item-9"><a href="http://testerstories.com/?cat=9" title="View all posts filed under Cucumber">Cucumber</a> (7)
+</li>
+	<li class="cat-item cat-item-19"><a href="http://testerstories.com/?cat=19" title="Any posts that deal with constructing a language.">Language Building</a> (6)
+</li>
+	<li class="cat-item cat-item-10"><a href="http://testerstories.com/?cat=10" title="View all posts filed under QTP">QTP</a> (6)
+</li>
+	<li class="cat-item cat-item-3"><a href="http://testerstories.com/?cat=3" title="View all posts filed under Quality">Quality</a> (6)
+</li>
+	<li class="cat-item cat-item-14"><a href="http://testerstories.com/?cat=14" title="View all posts filed under Quality Assurance">Quality Assurance</a> (6)
+</li>
+	<li class="cat-item cat-item-20"><a href="http://testerstories.com/?cat=20" title="Any posts dealing specifically with the use of Rex and Racc to construct a language.">Rex and Racc</a> (3)
+</li>
+	<li class="cat-item cat-item-5"><a href="http://testerstories.com/?cat=5" title="View all posts filed under RSpec">RSpec</a> (4)
+</li>
+	<li class="cat-item cat-item-7"><a href="http://testerstories.com/?cat=7" title="View all posts filed under Selenium">Selenium</a> (2)
+</li>
+	<li class="cat-item cat-item-22"><a href="http://testerstories.com/?cat=22" title="View all posts filed under Sinatra">Sinatra</a> (6)
+</li>
+	<li class="cat-item cat-item-16"><a href="http://testerstories.com/?cat=16" title="View all posts filed under Symbiont">Symbiont</a> (4)
+</li>
+	<li class="cat-item cat-item-23"><a href="http://testerstories.com/?cat=23" title="View all posts filed under TDL">TDL</a> (4)
+</li>
+	<li class="cat-item cat-item-4"><a href="http://testerstories.com/?cat=4" title="View all posts filed under Testing">Testing</a> (32)
+</li>
+	<li class="cat-item cat-item-12"><a href="http://testerstories.com/?cat=12" title="View all posts filed under Thinking">Thinking</a> (16)
+</li>
+	<li class="cat-item cat-item-6"><a href="http://testerstories.com/?cat=6" title="View all posts filed under Watir">Watir</a> (3)
+</li>
+	<li class="cat-item cat-item-21"><a href="http://testerstories.com/?cat=21" title="View all posts filed under Web Development">Web Development</a> (6)
+</li>
+		</ul>
+</li>			</ul>
+			
+			<!-- Unified into one widget area, as of 1.1.8 -->
+					</div><!-- #primary .widget-area -->
+				</div><!-- #container -->
+			<footer id="footer" role="contentinfo" class="row">
+				<div id="footerbar" class="twelvecol last">
+									</div><!-- #footerbar -->
+				<div id="colophon" class="twelvecol last">
+					<div id="site-info" class="sixcol">
+						<a href="http://testerstories.com/" title="Stories from a Software Tester" rel="home">
+							Stories from a Software Tester						</a>
+					</div><!-- #site-info -->
+					<div id="site-generator" class="sixcol last">
+												<a href="http://wordpress.org/" title="Semantic Personal Publishing Platform">Proudly powered by WordPress.</a>
+					</div><!-- #site-generator -->
+				</div><!-- #colophon -->
+			</footer><!-- #footer -->
+		</div><!-- #wrapper -->
+		<link rel='stylesheet' id='wp-jquery-ui-dialog-css'  href='http://testerstories.com/wp-includes/css/jquery-ui-dialog.min.css?ver=3.5.1' type='text/css' media='all' />
+<script type='text/javascript'>
+/* <![CDATA[ */
+var wordCountL10n = {"type":"w"};
+/* ]]> */
+</script>
+<script type='text/javascript' src='http://testerstories.com/wp-admin/js/word-count.min.js?ver=3.5.1'></script>
+<script type='text/javascript'>
+/* <![CDATA[ */
+var userSettings = {"url":"\/","uid":"0","time":"1367880824"};
+/* ]]> */
+</script>
+<script type='text/javascript' src='http://testerstories.com/wp-includes/js/utils.min.js?ver=3.5.1'></script>
+<script type='text/javascript' src='http://testerstories.com/wp-admin/js/editor.min.js?ver=3.5.1'></script>
+<script type='text/javascript' src='http://testerstories.com/wp-includes/js/jquery/ui/jquery.ui.core.min.js?ver=1.9.2'></script>
+<script type='text/javascript' src='http://testerstories.com/wp-includes/js/jquery/ui/jquery.ui.widget.min.js?ver=1.9.2'></script>
+<script type='text/javascript' src='http://testerstories.com/wp-includes/js/jquery/ui/jquery.ui.mouse.min.js?ver=1.9.2'></script>
+<script type='text/javascript' src='http://testerstories.com/wp-includes/js/jquery/ui/jquery.ui.resizable.min.js?ver=1.9.2'></script>
+<script type='text/javascript' src='http://testerstories.com/wp-includes/js/jquery/ui/jquery.ui.draggable.min.js?ver=1.9.2'></script>
+<script type='text/javascript' src='http://testerstories.com/wp-includes/js/jquery/ui/jquery.ui.button.min.js?ver=1.9.2'></script>
+<script type='text/javascript' src='http://testerstories.com/wp-includes/js/jquery/ui/jquery.ui.position.min.js?ver=1.9.2'></script>
+<script type='text/javascript' src='http://testerstories.com/wp-includes/js/jquery/ui/jquery.ui.dialog.min.js?ver=1.9.2'></script>
+<script type='text/javascript' src='http://testerstories.com/wp-includes/js/tinymce/plugins/wpdialogs/js/wpdialog.min.js?ver=3.5.1'></script>
+<script type='text/javascript'>
+/* <![CDATA[ */
+var wpLinkL10n = {"title":"Insert\/edit link","update":"Update","save":"Add Link","noTitle":"(no title)","noMatchesFound":"No matches found."};
+/* ]]> */
+</script>
+<script type='text/javascript' src='http://testerstories.com/wp-includes/js/wplink.min.js?ver=3.5.1'></script>
+<script type='text/javascript' src='http://testerstories.com/wp-includes/js/tinymce/plugins/wpdialogs/js/popup.min.js?ver=3.5.1'></script>
+
+	<script type="text/javascript">
+		tinyMCEPreInit = {
+			base : "http://testerstories.com/wp-includes/js/tinymce",
+			suffix : "",
+			query : "ver=358-23224",
+			mceInit : {'comment':{mode:"exact",width:"100%",theme:"advanced",skin:"wp_theme",language:"en",spellchecker_languages:"+English=en,Danish=da,Dutch=nl,Finnish=fi,French=fr,German=de,Italian=it,Polish=pl,Portuguese=pt,Spanish=es,Swedish=sv",theme_advanced_toolbar_location:"top",theme_advanced_toolbar_align:"left",theme_advanced_statusbar_location:"bottom",theme_advanced_resizing:true,theme_advanced_resize_horizontal:false,dialog_type:"modal",formats:{
+						alignleft : [
+							{selector : 'p,h1,h2,h3,h4,h5,h6,td,th,div,ul,ol,li', styles : {textAlign : 'left'}},
+							{selector : 'img,table', classes : 'alignleft'}
+						],
+						aligncenter : [
+							{selector : 'p,h1,h2,h3,h4,h5,h6,td,th,div,ul,ol,li', styles : {textAlign : 'center'}},
+							{selector : 'img,table', classes : 'aligncenter'}
+						],
+						alignright : [
+							{selector : 'p,h1,h2,h3,h4,h5,h6,td,th,div,ul,ol,li', styles : {textAlign : 'right'}},
+							{selector : 'img,table', classes : 'alignright'}
+						],
+						strikethrough : {inline : 'del'}
+					},relative_urls:false,remove_script_host:false,convert_urls:false,remove_linebreaks:true,gecko_spellcheck:true,fix_list_elements:true,keep_styles:false,entities:"38,amp,60,lt,62,gt",accessibility_focus:true,media_strict:false,paste_remove_styles:true,paste_remove_spans:true,paste_strip_class_attributes:"all",paste_text_use_dialog:true,webkit_fake_resize:false,spellchecker_rpc_url:"http://testerstories.com/wp-includes/js/tinymce/plugins/spellchecker/rpc.php",schema:"html5",wpeditimage_disable_captions:false,wp_fullscreen_content_css:"http://testerstories.com/wp-includes/js/tinymce/plugins/wpfullscreen/css/wp-fullscreen.css",plugins:"inlinepopups,spellchecker,tabfocus,paste,media,fullscreen,wordpress,wpeditimage,wpgallery,wplink,wpdialogs,-syntaxhighlighter,-crayon_tinymce",elements:"comment",wpautop:true,apply_source_formatting:false,theme_advanced_buttons1:"bold,italic,strikethrough,bullist,numlist,blockquote,justifyleft,justifycenter,justifyright,link,unlink,wp_more,spellchecker,fullscreen,wp_adv,separator,crayon_tinymce",theme_advanced_buttons2:"formatselect,underline,justifyfull,forecolor,pastetext,pasteword,removeformat,charmap,outdent,indent,undo,redo,wp_help",theme_advanced_buttons3:"",theme_advanced_buttons4:"",tabfocus_elements:":prev,:next",body_class:"comment post-type-post",theme_advanced_resizing_use_cookie:true,extended_valid_elements:",pre[*],code[*],iframe[*]"}},
+			qtInit : {'comment':{id:"comment",buttons:"strong,em,link,block,del,ins,img,ul,ol,li,code,more,spell,close"}},
+			ref : {plugins:"inlinepopups,spellchecker,tabfocus,paste,media,fullscreen,wordpress,wpeditimage,wpgallery,wplink,wpdialogs,-syntaxhighlighter,-crayon_tinymce",theme:"advanced",language:"en"},
+			load_ext : function(url,lang){var sl=tinymce.ScriptLoader;sl.markDone(url+'/langs/'+lang+'.js');sl.markDone(url+'/langs/'+lang+'_dlg.js');}
+		};
+	</script>
+<script type='text/javascript' src='http://testerstories.com/wp-includes/js/tinymce/tiny_mce.js?ver=358-23224'></script>
+<script type='text/javascript' src='http://testerstories.com/wp-includes/js/tinymce/wp-tinymce-schema.js?ver=358-23224'></script>
+<script type='text/javascript' src='http://testerstories.com/wp-includes/js/tinymce/langs/wp-langs-en.js?ver=358-23224'></script>
+
+	<script type="text/javascript">
+		var wpActiveEditor;
+
+		(function(){
+			var init, ed, qt, first_init, DOM, el, i, mce = 1;
+
+			if ( typeof(tinymce) == 'object' ) {
+				DOM = tinymce.DOM;
+				// mark wp_theme/ui.css as loaded
+				DOM.files[tinymce.baseURI.getURI() + '/themes/advanced/skins/wp_theme/ui.css'] = true;
+
+				DOM.events.add( DOM.select('.wp-editor-wrap'), 'mousedown', function(e){
+					if ( this.id )
+						wpActiveEditor = this.id.slice(3, -5);
+				});
+
+				for ( ed in tinyMCEPreInit.mceInit ) {
+					if ( first_init ) {
+						init = tinyMCEPreInit.mceInit[ed] = tinymce.extend( {}, first_init, tinyMCEPreInit.mceInit[ed] );
+					} else {
+						init = first_init = tinyMCEPreInit.mceInit[ed];
+					}
+
+					if ( mce )
+						try { tinymce.init(init); } catch(e){}
+				}
+			} else {
+				if ( tinyMCEPreInit.qtInit ) {
+					for ( i in tinyMCEPreInit.qtInit ) {
+						el = tinyMCEPreInit.qtInit[i].id;
+						if ( el )
+							document.getElementById('wp-'+el+'-wrap').onmousedown = function(){ wpActiveEditor = this.id.slice(3, -5); }
+					}
+				}
+			}
+
+			if ( typeof(QTags) == 'function' ) {
+				for ( qt in tinyMCEPreInit.qtInit ) {
+					try { quicktags( tinyMCEPreInit.qtInit[qt] ); } catch(e){}
+				}
+			}
+		})();
+		tinyMCEPreInit.load_ext("http://testerstories.com/wp-content/plugins/syntaxhighlighter", "en");
+tinymce.PluginManager.load("syntaxhighlighter", "http://testerstories.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter_mce.js");
+tinyMCEPreInit.load_ext("http://testerstories.com/wp-content/plugins/crayon-syntax-highlighter/util/tag-editor", "en");
+tinymce.PluginManager.load("crayon_tinymce", "http://testerstories.com/wp-content/plugins/crayon-syntax-highlighter/util/tag-editor/crayon_tinymce.js");
+
+			(function(){var t=tinyMCEPreInit,sl=tinymce.ScriptLoader,ln=t.ref.language,th=t.ref.theme,pl=t.ref.plugins;sl.markDone(t.base+'/langs/'+ln+'.js');sl.markDone(t.base+'/themes/'+th+'/langs/'+ln+'.js');sl.markDone(t.base+'/themes/'+th+'/langs/'+ln+'_dlg.js');sl.markDone(t.base+'/themes/advanced/skins/wp_theme/ui.css');tinymce.each(pl.split(','),function(n){if(n&&n.charAt(0)!='-'){sl.markDone(t.base+'/plugins/'+n+'/langs/'+ln+'.js');sl.markDone(t.base+'/plugins/'+n+'/langs/'+ln+'_dlg.js');}});})();
+			var ajaxurl = "/wp-admin/admin-ajax.php";		</script>
+			<div style="display:none;">
+	<form id="wp-link" tabindex="-1">
+	<input type="hidden" id="_ajax_linking_nonce" name="_ajax_linking_nonce" value="b78b5daadf" />	<div id="link-selector">
+		<div id="link-options">
+			<p class="howto">Enter the destination URL</p>
+			<div>
+				<label><span>URL</span><input id="url-field" type="text" name="href" /></label>
+			</div>
+			<div>
+				<label><span>Title</span><input id="link-title-field" type="text" name="linktitle" /></label>
+			</div>
+			<div class="link-target">
+				<label><input type="checkbox" id="link-target-checkbox" /> Open link in a new window/tab</label>
+			</div>
+		</div>
+				<p class="howto toggle-arrow " id="internal-toggle">Or link to existing content</p>
+		<div id="search-panel" style="display:none">
+			<div class="link-search-wrapper">
+				<label>
+					<span class="search-label">Search</span>
+					<input type="search" id="search-field" class="link-search-field" autocomplete="off" />
+					<span class="spinner"></span>
+				</label>
+			</div>
+			<div id="search-results" class="query-results">
+				<ul></ul>
+				<div class="river-waiting">
+					<span class="spinner"></span>
+				</div>
+			</div>
+			<div id="most-recent-results" class="query-results">
+				<div class="query-notice"><em>No search term specified. Showing recent items.</em></div>
+				<ul></ul>
+				<div class="river-waiting">
+					<span class="spinner"></span>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="submitbox">
+		<div id="wp-link-update">
+			<input type="submit" value="Add Link" class="button-primary" id="wp-link-submit" name="wp-link-submit">
+		</div>
+		<div id="wp-link-cancel">
+			<a class="submitdelete deletion" href="#">Cancel</a>
+		</div>
+	</div>
+	</form>
+	</div>
+		</body>
+</html>
