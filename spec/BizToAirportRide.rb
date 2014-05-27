@@ -4,13 +4,13 @@ describe "BizToAirportRide" do
   it "BizToAirportRide", :js => true do
 
     @home_page.open_logout
-    @generic_search.make_from_airport_search
+    @home_page.make_from_airport_search
 
     @search_result_page.wait_for_page_load
     @search_result_page.select_car
 
     @checkout_page.fill_passenger_details
-    @checkout_page.valid_flight_details
+    @checkout_page.fill_valid_flight_details
     @checkout_page.fill_cc
     @checkout_page.reserve_car
 

@@ -21,14 +21,14 @@ Capybara.default_wait_time = 120
 
 config.before(:all) do
   @home_page                       = Home_page.new
-  @login_page                      = LoginPage.new
-  @admin_page                      = AdminPage.new
-  @admin_make_reservation_page     = AdminMakeReservationPage.new
-  @search_result_page              = SearchResultPage.new
-  @checkout_page                   = CheckoutPage.new
-  @reservation_confirmation_page   = ReservationConfirmationPage.new
+#  @login_page                      = LoginPage.new
+#  @admin_page                      = AdminPage.new
+#  @admin_make_reservation_page     = AdminMakeReservationPage.new
+#  @search_result_page              = SearchResultPage.new
+#  @checkout_page                   = CheckoutPage.new
+#  @reservation_confirmation_page   = ReservationConfirmationPage.new
   @search                          = GenericSearch.new
-  @contact_info_page               = ContactInfoPage.new
+#  @contact_info_page               = ContactInfoPage.new
 end
 
 config.after(:all) do

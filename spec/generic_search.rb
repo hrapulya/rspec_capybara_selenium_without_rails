@@ -23,7 +23,7 @@ class GenericSearch
     end
   end
 
-  def make_from_airport_search(container)
+  def make_from_airport_search (container)
     select('From Airport', :from => 'service_type')
     select('11 PM', :from => 'search_pickup_time_hour')
     fill_in 'search_pickup_place', :with => 'SFO'
@@ -32,21 +32,6 @@ class GenericSearch
     @search.click_next_date
     check 'is_business'
     find_button('Get a quote').click
-  end
-
-  def open_logout
-    visit Capybara.default_host + '/logout'
-  end
-
-  def wait_for_ajax
-    wait_until { page.evaluate_script('$.active') == 0 }
-  end
-
-  def wait_until
-    Timeout.timeout(Capybara.default_wait_time) do
-      sleep(0.01) until value = yield
-      value
-    end
   end
 
   def click_next_date
@@ -58,17 +43,6 @@ class GenericSearch
       find('#calnext').click
       find(:xpath, "//*[@id='calbody']//a[not(@class)]/../a[contains(text(), '10')]").click
     end
-  end
-
-  def verify_user_details
-    find('#info_acct').text.should == 'Acct Type: Business'
-    find('#info_fname').text.should == 'First name: Leo'
-    find('#info_lname').text.should == 'Last name: Pekker'
-    find('#info_enter_acct_link').text.should == 'Enter Account'
-  end
-
-  def random_number
-    rand 100000000
   end
 
 end

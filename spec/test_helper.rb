@@ -1,35 +1,32 @@
-require 'rspec/autorun'
-require 'capybara/rspec'
-require 'capybara/rails'
-require 'rspec/rails'
+require 'spec_helper'
+require 'support/generic_search.rb'
 
+class BaseTest
+  
+  def open_logout
+    visit Capybara.default_host + '/logout'
+  end
 
-RSpec.configure do |config|
-  config.include Capybara::DSL
-end
+  def wait_for_ajax
+    wait_until { page.evaluate_script('$.active') == 0 }
+  end
 
-# Requires supporting ruby files with custom matchers and macros, etc,
-# in spec/support/ and its subdirectories.
-Dir[Rails.root.join("spec/support/**/*.rb")].each {|f| require f}
-Capybara.register_driver :selenium do |app|
-  require 'selenium/webdriver'
-  Selenium::WebDriver::Firefox::Binary.path = "/opt/firefox/firefox"
-  Capybara::Selenium::Driver.new(app, :browser => :firefox)
-end
-Capybara.default_host = 'http://staging.limos.com'
-Capybara.default_wait_time = 120
+  def wait_until
+    Timeout.timeout(Capybara.default_wait_time) do
+      sleep(0.01) until value = yield
+      value
+    end
+  end
 
-config.before(:all) do
-  @search_page                     = SearchPage.new
-  @login_page                      = LoginPage.new
-  @admin_page                      = AdminPage.new
-  @admin_make_reservation_page     = AdminMakeReservationPage.new
-  @search_result_page              = SearchResultPage.new
-  @checkout_page                   = CheckoutPage.new
-  @reservation_confirmation_page   = ReservationConfirmationPage.new
-  @search                          = GenericSearch.new
-  @contact_info_page               = ContactInfoPage.new
-end
+  def verify_user_details
+    find('#info_acct').text.should == 'Acct Type: Business'
+    find('#info_fname').text.should == 'First name: Leo'
+    find('#info_lname').text.should == 'Last name: Pekker'
+    find('#info_enter_acct_link').text.should == 'Enter Account'
+  end
 
-config.after(:all) do
+  def random_number
+    rand 100000000
+  end
+
 end

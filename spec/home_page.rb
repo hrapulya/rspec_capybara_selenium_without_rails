@@ -1,4 +1,5 @@
 require 'spec_helper'
+require 'support/generic_search.rb'
 
 class HomePage < GenericSearch
   include Capybara::DSL
